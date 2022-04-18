@@ -58,6 +58,8 @@ afterEvaluate {
 
                 artifact sourcesJar
                 artifact javadocJar
+
+                artifactId 'ciconia'
             }
         }
 
