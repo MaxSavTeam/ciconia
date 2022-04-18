@@ -77,7 +77,7 @@ class Parser {
 			ExecutableMethod.Argument argument = new ExecutableMethod.Argument(parameterType, paramAnnotation);
 			arguments.add(argument);
 		}
-		return Optional.of(new ExecutableMethod(method, mapping.value(), arguments));
+		return Optional.of(new ExecutableMethod(method, mapping, arguments));
 	}
 
 	private static void requireValidMapping(String value, String entityName){

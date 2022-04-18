@@ -1,5 +1,6 @@
 package com.maxsavteam.ciconia;
 
+import com.maxsavteam.ciconia.annotations.RequestMethod;
 import com.maxsavteam.ciconia.components.Component;
 import com.maxsavteam.ciconia.components.ComponentsDatabase;
 import com.maxsavteam.ciconia.components.Controller;
@@ -9,10 +10,13 @@ import com.maxsavteam.ciconia.exceptions.InstantiationException;
 import com.maxsavteam.ciconia.graph.ComponentsDependenciesGraph;
 import com.maxsavteam.ciconia.tree.Tree;
 import com.maxsavteam.ciconia.tree.TreeBuilder;
+import com.maxsavteam.ciconia.utils.Pair;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CiconiaApplication {
@@ -66,14 +70,35 @@ public class CiconiaApplication {
 	}
 
 	private static void requireNoDuplicateMappings(List<Controller> controllers){
-		Map<String, String> map = new HashMap<>();
+		Map<String, ArrayList<Pair<RequestMethod, String>>> map = new HashMap<>();
 		for(Controller controller : controllers){
 			for(ExecutableMethod method : controller.getExecutableMethods()){
-				String path = controller.getComponentClass().getName() + "#" + method.getMethod().getName();
+				String methodName = controller.getComponentClass().getName() + "#" + method.getMethod().getName();
 				String mapping = controller.getMappingName() + "." + method.getMappingName();
-				if(map.containsKey(mapping))
-					throw new DuplicateMappingException(map.get(mapping) + " and " + path + " have the same mapping (" + mapping + ")");
-				map.put(mapping, path);
+				ArrayList<Pair<RequestMethod, String>> mapRequestMethods = map.getOrDefault(mapping, new ArrayList<>());
+				if(mapRequestMethods.isEmpty())
+					map.put(mapping, mapRequestMethods);
+				for(RequestMethod requestMethod : method.getMapping().method()){
+					Optional<Pair<RequestMethod, String>> op = mapRequestMethods
+							.stream()
+							.filter(p -> p.getFirst().equals(requestMethod))
+							.findAny();
+					if(op.isPresent()){
+						throw new DuplicateMappingException(String.format(
+								"Duplicate mapping found.\n" +
+										"Mapping \"%s\" (%s) defined for\n" +
+										"%s\n" +
+										"and\n" +
+										"%s",
+								method.getMapping().value(),
+								requestMethod,
+								methodName,
+								op.get().getSecond()
+						));
+					}else{
+						mapRequestMethods.add(new Pair<>(requestMethod, methodName));
+					}
+				}
 			}
 		}
 	}

@@ -1,25 +1,28 @@
 package com.maxsavteam.ciconia.components;
 
+import com.maxsavteam.ciconia.annotations.Mapping;
 import com.maxsavteam.ciconia.annotations.Param;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ExecutableMethod {
 
 	private final Method method;
 	private final List<Argument> arguments;
-	private final String mappingName;
-
-	public ExecutableMethod(Method method, String mappingName, List<Argument> arguments) {
+	private final Mapping mapping;
+	public ExecutableMethod(Method method, Mapping mapping, List<Argument> arguments) {
 		this.method = method;
 		this.arguments = arguments;
-		this.mappingName = mappingName;
+		this.mapping = mapping;
 	}
 
 	public String getMappingName() {
-		return mappingName;
+		return mapping.value();
+	}
+
+	public Mapping getMapping() {
+		return mapping;
 	}
 
 	public List<Argument> getArguments() {

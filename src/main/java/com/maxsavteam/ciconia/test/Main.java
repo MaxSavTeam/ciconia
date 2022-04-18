@@ -5,6 +5,7 @@ import com.maxsavteam.ciconia.CiconiaHandler;
 import com.maxsavteam.ciconia.annotations.Component;
 import com.maxsavteam.ciconia.annotations.Mapping;
 import com.maxsavteam.ciconia.annotations.Param;
+import com.maxsavteam.ciconia.annotations.RequestMethod;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -22,8 +23,10 @@ public class Main {
 						.put("params", new JSONObject()
 								.put("list", new JSONArray().put("hello").put("world"))
 								.put("x", "Oleg")
-						)
+						),
+				RequestMethod.POST
 		);
+		System.out.println();
 		System.out.println(result);
 	}
 
@@ -33,7 +36,7 @@ public class Main {
 			System.out.println(i);
 	}
 
-	@Mapping("test.component")
+	@Mapping(value = "test", method = RequestMethod.POST)
 	public String testComponent(TestComponent testComponent, @Param("x") String x){
 		return testComponent.test(x);
 	}

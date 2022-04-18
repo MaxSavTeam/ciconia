@@ -1,5 +1,6 @@
 package com.maxsavteam.ciconia.tree;
 
+import com.maxsavteam.ciconia.annotations.RequestMethod;
 import com.maxsavteam.ciconia.components.Controller;
 import com.maxsavteam.ciconia.components.ExecutableMethod;
 import com.maxsavteam.ciconia.utils.Pair;
@@ -33,18 +34,18 @@ public class Tree {
 		addController(controller, mappingParts, partPosition + 1, nextNode);
 	}
 
-	public Optional<Pair<Controller, ExecutableMethod>> findMethod(String methodName){
+	public Optional<Pair<Controller, ExecutableMethod>> findMethod(String methodName, RequestMethod requestMethod){
 		String[] parts = methodName.split("\\.");
-		return findMethod(headNode, parts, 0);
+		return findMethod(headNode, parts, 0, requestMethod);
 	}
 
-	public Optional<Pair<Controller, ExecutableMethod>> findMethod(Node node, String[] mappingParts, int partPosition){
+	public Optional<Pair<Controller, ExecutableMethod>> findMethod(Node node, String[] mappingParts, int partPosition, RequestMethod requestMethod){
 		if(partPosition >= mappingParts.length)
 			return Optional.empty();
 
 		String methodMapping = join(mappingParts, partPosition);
 		for(Controller controller : node.getControllers()){
-			Optional<ExecutableMethod> op = controller.findMethodByMapping(methodMapping);
+			Optional<ExecutableMethod> op = controller.findMethodByMapping(methodMapping, requestMethod);
 			if(op.isPresent()){
 				return Optional.of(new Pair<>(controller, op.get()));
 			}
@@ -53,7 +54,7 @@ public class Tree {
 		Node nextNode = node.getNodeMap().get(part);
 		if(nextNode == null)
 			return Optional.empty();
-		return findMethod(nextNode, mappingParts, partPosition + 1);
+		return findMethod(nextNode, mappingParts, partPosition + 1, requestMethod);
 	}
 
 	private String join(String[] parts, int offset){

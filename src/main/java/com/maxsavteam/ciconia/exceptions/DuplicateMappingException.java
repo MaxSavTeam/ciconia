@@ -1,6 +1,6 @@
 package com.maxsavteam.ciconia.exceptions;
 
-public class DuplicateMappingException extends RuntimeException {
+public class DuplicateMappingException extends InstantiationException {
 
 	public DuplicateMappingException() {
 	}

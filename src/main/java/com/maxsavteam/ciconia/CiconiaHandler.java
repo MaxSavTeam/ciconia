@@ -3,6 +3,7 @@ package com.maxsavteam.ciconia;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maxsavteam.ciconia.annotations.Param;
+import com.maxsavteam.ciconia.annotations.RequestMethod;
 import com.maxsavteam.ciconia.components.Component;
 import com.maxsavteam.ciconia.components.ComponentsDatabase;
 import com.maxsavteam.ciconia.components.Controller;
@@ -44,10 +45,10 @@ public class CiconiaHandler {
 		instance = new CiconiaHandler(tree, componentsDatabase);
 	}
 
-	public Object handle(JSONObject jsonObject) {
+	public Object handle(JSONObject jsonObject, RequestMethod requestMethod) {
 		String methodName = jsonObject.getString("method");
 
-		Optional<Pair<Controller, ExecutableMethod>> op = tree.findMethod(methodName);
+		Optional<Pair<Controller, ExecutableMethod>> op = tree.findMethod(methodName, requestMethod);
 		if (op.isEmpty())
 			throw new MethodNotFoundException(methodName);
 		Controller controller = op.get().getFirst();
