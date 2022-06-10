@@ -1,6 +1,7 @@
 package com.maxsavteam.ciconia.test;
 
 import com.maxsavteam.ciconia.CiconiaApplication;
+import com.maxsavteam.ciconia.CiconiaConfiguration;
 import com.maxsavteam.ciconia.CiconiaHandler;
 import com.maxsavteam.ciconia.annotations.Component;
 import com.maxsavteam.ciconia.annotations.Mapping;
@@ -16,10 +17,13 @@ import java.util.List;
 public class Main {
 
 	public static void main(String[] args) {
-		CiconiaApplication.run(Main.class);
+		CiconiaConfiguration configuration = new CiconiaConfiguration.Builder()
+				.setPathSeparator('/')
+				.build();
+		CiconiaApplication.run(Main.class, configuration);
 		Object result = CiconiaHandler.getInstance().handle(
 				new JSONObject()
-						.put("method", "test.test")
+						.put("method", "test/test")
 						.put("params", new JSONObject()
 								.put("list", new JSONArray().put("hello").put("world"))
 								.put("x", "Oleg")

@@ -34,8 +34,8 @@ public class Tree {
 		addController(controller, mappingParts, partPosition + 1, nextNode);
 	}
 
-	public Optional<Pair<Controller, ExecutableMethod>> findMethod(String methodName, RequestMethod requestMethod){
-		String[] parts = methodName.split("\\.");
+	public Optional<Pair<Controller, ExecutableMethod>> findMethod(String methodName, RequestMethod requestMethod, char pathSeparator){
+		String[] parts = methodName.split("\\Q" + pathSeparator + "\\E");
 		return findMethod(headNode, parts, 0, requestMethod);
 	}
 

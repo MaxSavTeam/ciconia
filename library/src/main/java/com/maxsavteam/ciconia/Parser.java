@@ -15,15 +15,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.reflections.scanners.Scanners.SubTypes;
-import static org.reflections.scanners.Scanners.TypesAnnotated;
-
 class Parser {
 
 	private final Reflections reflections;
+	private final CiconiaConfiguration configuration;
 
-	public Parser(Class<?> primarySource) {
+	public Parser(Class<?> primarySource, CiconiaConfiguration configuration) {
 		this.reflections = new Reflections(primarySource.getPackageName());
+		this.configuration = configuration;
 	}
 
 	public List<Component> parse(){
@@ -47,7 +46,7 @@ class Parser {
 
 	private Controller processControllerMapping(Class<?> cl){
 		Mapping annotation = cl.getAnnotation(Mapping.class);
-		requireValidMapping(annotation.value(), cl.getName());
+		requireValidMapping(annotation.value(), cl.getName(), configuration.getPathSeparator());
 		ArrayList<ExecutableMethod> methods = new ArrayList<>();
 		for(Method method : cl.getDeclaredMethods()){
 			Optional<ExecutableMethod> op = processMethod(method);
@@ -60,7 +59,7 @@ class Parser {
 		Mapping mapping = method.getAnnotation(Mapping.class);
 		if(mapping == null)
 			return Optional.empty();
-		requireValidMapping(mapping.value(), method.getDeclaringClass().getName() + "#" + method.getName());
+		requireValidMapping(mapping.value(), method.getDeclaringClass().getName() + "#" + method.getName(), configuration.getPathSeparator());
 
 		Annotation[][] parameterAnnotations = method.getParameterAnnotations();
 		Class<?>[] parameterTypes = method.getParameterTypes();
@@ -81,16 +80,17 @@ class Parser {
 		return Optional.of(new ExecutableMethod(method, mapping, arguments));
 	}
 
-	private static void requireValidMapping(String value, String entityName){
+	private static void requireValidMapping(String value, String entityName, char pathSeparator){
+		String separator = String.valueOf(pathSeparator);
 		String suf = "(" + entityName + ")";
 		if(value.isEmpty())
 			throw new IllegalArgumentException("Mapping should not be empty. " + suf);
 		if(value.contains(" "))
 			throw new IllegalArgumentException("Mapping should not contain whitespaces. " + suf);
-		if(value.startsWith(".") || value.endsWith("."))
-			throw new IllegalArgumentException("Mapping should not start or end with dot. " + entityName);
-		if(value.contains(".."))
-			throw new IllegalArgumentException("Mapping should not contain 2 (or more) dots in row. " + suf);
+		if(value.startsWith(separator) || value.endsWith(separator))
+			throw new IllegalArgumentException("Mapping should not start or end with separator. " + entityName);
+		if(value.contains(separator + separator))
+			throw new IllegalArgumentException("Mapping should not contain 2 (or more) separators in row. " + suf);
 	}
 
 }

@@ -22,13 +22,15 @@ import java.util.stream.Collectors;
 public class CiconiaApplication {
 
 	private final Class<?> primarySource;
+	private final CiconiaConfiguration configuration;
 
-	public CiconiaApplication(Class<?> primarySource) {
+	private CiconiaApplication(Class<?> primarySource, CiconiaConfiguration configuration) {
 		this.primarySource = primarySource;
+		this.configuration = configuration;
 	}
 
 	private void run(){
-		List<Component> components = new Parser(primarySource).parse();
+		List<Component> components = new Parser(primarySource, configuration).parse();
 		List<Controller> controllers = components
 				.stream()
 				.filter(Controller.class::isInstance)
@@ -50,7 +52,7 @@ public class CiconiaApplication {
 				= InstantiationUtils.instantiateComponents(topologicalOrder);
 
 		Tree tree = TreeBuilder.build(controllers);
-		CiconiaHandler.initialize(tree, componentsDatabase);
+		CiconiaHandler.initialize(tree, componentsDatabase, configuration);
 	}
 
 	private String getPrettyCycle(List<Component> cycle){
@@ -104,7 +106,11 @@ public class CiconiaApplication {
 	}
 
 	public static void run(Class<?> source){
-		new CiconiaApplication(source).run();
+		run(source, new CiconiaConfiguration.Builder().build());
+	}
+
+	public static void run(Class<?> source, CiconiaConfiguration configuration){
+		new CiconiaApplication(source, configuration).run();
 	}
 
 }
