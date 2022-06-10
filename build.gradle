@@ -13,6 +13,14 @@ repositories {
     }
 }
 
+jar {
+    manifest {
+        attributes (
+                "Automatic-Module-Name" : "com.maxsavteam.ciconia"
+        )
+    }
+}
+
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
@@ -71,7 +79,6 @@ afterEvaluate {
         repositories {
             maven {
                 url 'https://repo.maxsavteam.com/releases'
-                allowInsecureProtocol true
                 credentials {
                     username 'admin'
                     password "$System.env.REPOSILITE_ADMIN_TOKEN"
