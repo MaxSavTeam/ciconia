@@ -6,6 +6,7 @@ import com.maxsavteam.ciconia.components.Component;
 import com.maxsavteam.ciconia.components.Controller;
 import com.maxsavteam.ciconia.components.ExecutableMethod;
 import org.reflections.Reflections;
+import org.reflections.scanners.Scanners;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -26,7 +27,7 @@ class Parser {
 	}
 
 	public List<Component> parse(){
-		Set<Class<?>> set = reflections.get(SubTypes.of(TypesAnnotated.with(com.maxsavteam.ciconia.annotations.Component.class)).asClass());
+		Set<Class<?>> set = reflections.get(Scanners.SubTypes.of(Scanners.TypesAnnotated.with(com.maxsavteam.ciconia.annotations.Component.class)).asClass());
 		ArrayList<Component> components = new ArrayList<>();
 		for(Class<?> cl : set){
 			components.add(processComponent(cl));
