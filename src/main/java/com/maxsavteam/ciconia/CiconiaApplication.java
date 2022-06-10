@@ -65,7 +65,7 @@ public class CiconiaApplication {
 				sb.append(String.format("↑     ↓%n"));
 			}
 		}
-		sb.append("└─────").append((char) 217); // symbol does not work
+		sb.append("└─────┘");
 		return sb.toString();
 	}
 
