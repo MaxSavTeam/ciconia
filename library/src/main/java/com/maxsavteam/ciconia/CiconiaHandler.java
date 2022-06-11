@@ -50,7 +50,7 @@ public class CiconiaHandler {
 
 		Optional<Pair<Controller, ExecutableMethod>> op = tree.findMethod(methodName, requestMethod);
 		if (op.isEmpty())
-			throw new MethodNotFoundException(methodName);
+			throw new MethodNotFoundException(methodName + " (" + requestMethod + ")");
 		Controller controller = op.get().getFirst();
 		ExecutableMethod executableMethod = op.get().getSecond();
 
