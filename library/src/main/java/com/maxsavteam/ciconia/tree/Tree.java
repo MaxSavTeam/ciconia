@@ -23,20 +23,25 @@ public class Tree {
 	}
 
 	public void addController(Controller controller){
-		String[] parts = splitMapping(controller.getMappingName());
+		List<String> parts = splitMapping(controller.getMappingName());
 		addController(controller, parts, 0, headNode);
 	}
 
-	private String[] splitMapping(String mapping){
-		return mapping.split("\\Q" + configuration.getPathSeparator() + "\\E");
+	private List<String> splitMapping(String mapping){
+		String[] parts = mapping.split("\\Q" + configuration.getPathSeparator() + "\\E");
+		List<String> list = new ArrayList<>(List.of(parts));
+		if(mapping.endsWith(String.valueOf(configuration.getPathSeparator()))){
+			list.add("");
+		}
+		return list;
 	}
 
-	private void addController(Controller controller, String[] mappingParts, int partPosition, Node node){
-		if(partPosition >= mappingParts.length){
+	private void addController(Controller controller, List<String> mappingParts, int partPosition, Node node){
+		if(partPosition >= mappingParts.size()){
 			node.addController(controller);
 			return;
 		}
-		String part = mappingParts[partPosition];
+		String part = mappingParts.get(partPosition);
 		Node nextNode = node.getNodeMap().get(part);
 		if(nextNode == null){
 			nextNode = new Node();
@@ -46,12 +51,12 @@ public class Tree {
 	}
 
 	public Optional<Pair<Controller, ExecutableMethod>> findMethod(String methodName, RequestMethod requestMethod){
-		String[] parts = splitMapping(methodName);
+		List<String> parts = splitMapping(methodName);
 		return findMethod(headNode, parts, 0, requestMethod);
 	}
 
-	public Optional<Pair<Controller, ExecutableMethod>> findMethod(Node node, String[] mappingParts, int partPosition, RequestMethod requestMethod){
-		if(partPosition >= mappingParts.length)
+	public Optional<Pair<Controller, ExecutableMethod>> findMethod(Node node, List<String> mappingParts, int partPosition, RequestMethod requestMethod){
+		if(partPosition >= mappingParts.size())
 			return Optional.empty();
 
 		String methodMapping = join(mappingParts, partPosition);
@@ -61,19 +66,19 @@ public class Tree {
 				return Optional.of(new Pair<>(controller, op.get()));
 			}
 		}
-		String part = mappingParts[partPosition];
+		String part = mappingParts.get(partPosition);
 		Node nextNode = node.getNodeMap().get(part);
 		if(nextNode == null)
 			return Optional.empty();
 		return findMethod(nextNode, mappingParts, partPosition + 1, requestMethod);
 	}
 
-	private String join(String[] parts, int offset){
+	private String join(List<String> parts, int offset){
 		StringBuilder sb = new StringBuilder();
-		for(int i = offset; i < parts.length; i++){
-			sb.append(parts[i]);
-			if(i != parts.length - 1)
-				sb.append(".");
+		for(int i = offset; i < parts.size(); i++){
+			sb.append(parts.get(i));
+			if(i != parts.size() - 1)
+				sb.append(configuration.getPathSeparator());
 		}
 		return sb.toString();
 	}

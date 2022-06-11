@@ -23,7 +23,7 @@ public class Main {
 		CiconiaApplication.run(Main.class, configuration);
 		Object result = CiconiaHandler.getInstance().handle(
 				new JSONObject()
-						.put("method", "test/test")
+						.put("method", "test/")
 						.put("params", new JSONObject()
 								.put("list", new JSONArray().put("hello").put("world"))
 								.put("x", "Oleg")

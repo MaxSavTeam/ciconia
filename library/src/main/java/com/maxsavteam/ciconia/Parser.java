@@ -83,8 +83,6 @@ class Parser {
 	private static void requireValidMapping(String value, String entityName, char pathSeparator){
 		String separator = String.valueOf(pathSeparator);
 		String suf = "(" + entityName + ")";
-		if(value.isEmpty())
-			throw new IllegalArgumentException("Mapping should not be empty. " + suf);
 		if(value.contains(" "))
 			throw new IllegalArgumentException("Mapping should not contain whitespaces. " + suf);
 		if(value.startsWith(separator) || value.endsWith(separator))
