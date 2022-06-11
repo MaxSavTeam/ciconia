@@ -28,7 +28,7 @@ public class Tree {
 	}
 
 	private String[] splitMapping(String mapping){
-		return mapping.split("\\Q" + configuration + "\\E");
+		return mapping.split("\\Q" + configuration.getPathSeparator() + "\\E");
 	}
 
 	private void addController(Controller controller, String[] mappingParts, int partPosition, Node node){
