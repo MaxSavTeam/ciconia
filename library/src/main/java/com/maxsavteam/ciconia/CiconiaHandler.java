@@ -35,22 +35,20 @@ public class CiconiaHandler {
 
 	private final Tree tree;
 	private final ComponentsDatabase componentsDb;
-	private final CiconiaConfiguration configuration;
 
-	private CiconiaHandler(Tree tree, ComponentsDatabase db, CiconiaConfiguration configuration) {
+	private CiconiaHandler(Tree tree, ComponentsDatabase db) {
 		this.tree = tree;
 		this.componentsDb = db;
-		this.configuration = configuration;
 	}
 
-	static void initialize(Tree tree, ComponentsDatabase componentsDatabase, CiconiaConfiguration configuration) {
-		instance = new CiconiaHandler(tree, componentsDatabase, configuration);
+	static void initialize(Tree tree, ComponentsDatabase componentsDatabase) {
+		instance = new CiconiaHandler(tree, componentsDatabase);
 	}
 
 	public Object handle(JSONObject jsonObject, RequestMethod requestMethod) {
 		String methodName = jsonObject.getString("method");
 
-		Optional<Pair<Controller, ExecutableMethod>> op = tree.findMethod(methodName, requestMethod, configuration.getPathSeparator());
+		Optional<Pair<Controller, ExecutableMethod>> op = tree.findMethod(methodName, requestMethod);
 		if (op.isEmpty())
 			throw new MethodNotFoundException(methodName);
 		Controller controller = op.get().getFirst();

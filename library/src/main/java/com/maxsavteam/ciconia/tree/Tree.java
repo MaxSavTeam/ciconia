@@ -1,5 +1,6 @@
 package com.maxsavteam.ciconia.tree;
 
+import com.maxsavteam.ciconia.CiconiaConfiguration;
 import com.maxsavteam.ciconia.annotations.RequestMethod;
 import com.maxsavteam.ciconia.components.Controller;
 import com.maxsavteam.ciconia.components.ExecutableMethod;
@@ -15,9 +16,19 @@ public class Tree {
 
 	private final Node headNode = new Node();
 
+	private final CiconiaConfiguration configuration;
+
+	public Tree(CiconiaConfiguration configuration) {
+		this.configuration = configuration;
+	}
+
 	public void addController(Controller controller){
-		String[] parts = controller.getMappingName().split("\\.");
+		String[] parts = splitMapping(controller.getMappingName());
 		addController(controller, parts, 0, headNode);
+	}
+
+	private String[] splitMapping(String mapping){
+		return mapping.split("\\Q" + configuration + "\\E");
 	}
 
 	private void addController(Controller controller, String[] mappingParts, int partPosition, Node node){
@@ -34,8 +45,8 @@ public class Tree {
 		addController(controller, mappingParts, partPosition + 1, nextNode);
 	}
 
-	public Optional<Pair<Controller, ExecutableMethod>> findMethod(String methodName, RequestMethod requestMethod, char pathSeparator){
-		String[] parts = methodName.split("\\Q" + pathSeparator + "\\E");
+	public Optional<Pair<Controller, ExecutableMethod>> findMethod(String methodName, RequestMethod requestMethod){
+		String[] parts = splitMapping(methodName);
 		return findMethod(headNode, parts, 0, requestMethod);
 	}
 

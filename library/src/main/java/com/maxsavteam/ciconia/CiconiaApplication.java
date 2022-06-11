@@ -51,8 +51,8 @@ public class CiconiaApplication {
 		ComponentsDatabase componentsDatabase
 				= InstantiationUtils.instantiateComponents(topologicalOrder);
 
-		Tree tree = TreeBuilder.build(controllers);
-		CiconiaHandler.initialize(tree, componentsDatabase, configuration);
+		Tree tree = TreeBuilder.build(configuration, controllers);
+		CiconiaHandler.initialize(tree, componentsDatabase);
 	}
 
 	private String getPrettyCycle(List<Component> cycle){
