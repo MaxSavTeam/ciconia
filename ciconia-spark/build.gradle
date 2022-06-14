@@ -1,0 +1,28 @@
+plugins {
+    id 'java'
+}
+apply from: "../common.gradle"
+
+group 'com.maxsavteam.ciconia'
+version '0.3.0-beta'
+
+repositories {
+    mavenCentral()
+    mstRepo()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+    implementation project(":library")
+
+    implementation 'com.sparkjava:spark-core:2.9.3'
+
+    // https://mvnrepository.com/artifact/org.json/json
+    implementation 'org.json:json:20220320'
+}
+
+test {
+    useJUnitPlatform()
+}

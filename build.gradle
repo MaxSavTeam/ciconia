@@ -1,12 +1,12 @@
 plugins {
     id 'java'
+    id 'maven-publish'
 }
+apply from: "common.gradle"
 
 repositories {
     mavenCentral()
-    maven {
-        url 'https://repo.maxsavteam.com'
-    }
+    mstRepo()
 }
 
 dependencies {
@@ -14,6 +14,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 
     implementation project(":library")
+    implementation project(":ciconia-spark")
 
     // https://mvnrepository.com/artifact/org.json/json
     implementation 'org.json:json:20220320'

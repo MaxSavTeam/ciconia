@@ -1,0 +1,14 @@
+repositories.ext.mstRepo = {
+    repositories.maven {
+        url 'https://repo.maxsavteam.com'
+    }
+}
+
+publishing.ext.mstPublishing = {
+    publishing.publications.maven (MavenPublication) {
+        from components.java
+
+        artifact sourcesJar
+        artifact javadocJar
+    }
+}

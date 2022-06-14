@@ -16,6 +16,12 @@ public class CiconiaConfiguration {
 
 		private char pathSeparator = '.';
 
+		public Builder() {}
+
+		public Builder(CiconiaConfiguration configuration) {
+			this.pathSeparator = configuration.pathSeparator;
+		}
+
 		public Builder setPathSeparator(char pathSeparator) {
 			this.pathSeparator = pathSeparator;
 			return this;

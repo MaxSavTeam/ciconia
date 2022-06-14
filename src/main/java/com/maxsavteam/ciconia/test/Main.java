@@ -40,9 +40,9 @@ public class Main {
 			System.out.println(i);
 	}
 
-	@Mapping(value = "test", method = RequestMethod.POST)
-	public String testComponent(TestComponent testComponent, @Param("x") String x){
-		return testComponent.test(x);
+	@Mapping(value = "test_", method = RequestMethod.GET)
+	public String testComponent(TestComponent testComponent, @Param("x") String x, @Param("y") String y){
+		return testComponent.test(x) + y;
 	}
 
 }

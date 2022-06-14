@@ -1,3 +1,4 @@
 rootProject.name = 'ProjectCiconia'
 include 'library'
+include 'ciconia-spark'
 
