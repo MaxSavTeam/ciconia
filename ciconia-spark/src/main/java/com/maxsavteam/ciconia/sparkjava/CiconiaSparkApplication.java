@@ -27,7 +27,7 @@ public class CiconiaSparkApplication {
 		jsonObject.put("method", path);
 		JSONObject params = new JSONObject();
 		for(String attribute : request.queryParams())
-			params.put(attribute, (Object) request.queryParams(attribute));
+			params.put(attribute, request.queryParams(attribute));
 		jsonObject.put("params", params);
 
 		Object result = CiconiaHandler.getInstance().handle(

@@ -119,6 +119,12 @@ public class CiconiaHandler {
 			return list;
 		}
 
+		if(param instanceof String){
+			Object result = StringConverter.tryToConvert((String) param, cl);
+			if(result != null)
+				return result;
+		}
+
 		throw new IncompatibleClassException(
 				String.format(
 						"Parameter \"%s\" cannot be converted to declared type %s",

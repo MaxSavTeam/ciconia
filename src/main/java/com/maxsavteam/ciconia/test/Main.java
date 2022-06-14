@@ -41,8 +41,13 @@ public class Main {
 	}
 
 	@Mapping(value = "test_", method = RequestMethod.GET)
-	public String testComponent(TestComponent testComponent, @Param("x") String x, @Param("y") String y){
+	public String testComponent(TestComponent testComponent, @Param("x") String x, @Param("y") Integer y){
 		return testComponent.test(x) + y;
+	}
+
+	@Mapping(value = "test_json", method = RequestMethod.GET)
+	public String testJson(@Param("json") JSONObject jsonObject){
+		return jsonObject.toString();
 	}
 
 }
