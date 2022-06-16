@@ -1,5 +1,6 @@
 package com.maxsavteam.ciconia;
 
+import com.maxsavteam.ciconia.tree.Tree;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maxsavteam.ciconia.annotations.Param;
@@ -12,7 +13,6 @@ import com.maxsavteam.ciconia.exceptions.ExecutionException;
 import com.maxsavteam.ciconia.exceptions.IncompatibleClassException;
 import com.maxsavteam.ciconia.exceptions.MethodNotFoundException;
 import com.maxsavteam.ciconia.exceptions.ParameterNotPresentException;
-import com.maxsavteam.ciconia.tree.Tree;
 import com.maxsavteam.ciconia.utils.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;

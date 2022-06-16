@@ -1,6 +1,6 @@
 package com.maxsavteam.ciconia;
 
-import com.maxsavteam.ciconia.components.Component;
+import com.maxsavteam.ciconia.annotations.Component;
 import com.maxsavteam.ciconia.components.ComponentsDatabase;
 import com.maxsavteam.ciconia.exceptions.InstantiationException;
 
@@ -11,9 +11,9 @@ class InstantiationUtils {
 
 	private InstantiationUtils(){}
 
-	public static ComponentsDatabase instantiateComponents(List<Component> components){
+	public static ComponentsDatabase instantiateComponents(List<com.maxsavteam.ciconia.components.Component> components){
 		ComponentsDatabase componentsDatabase = new ComponentsDatabase();
-		for(Component component : components) {
+		for(com.maxsavteam.ciconia.components.Component component : components) {
 			Constructor<?> ctor = component.findPreferredConstructor();
 			instantiate(component, ctor, componentsDatabase);
 			componentsDatabase.addComponent(component);
@@ -21,11 +21,11 @@ class InstantiationUtils {
 		return componentsDatabase;
 	}
 
-	public static void instantiate(Component component, Constructor<?> ctor, ComponentsDatabase componentsDatabase){
+	public static void instantiate(com.maxsavteam.ciconia.components.Component component, Constructor<?> ctor, ComponentsDatabase componentsDatabase){
 		Object[] args = new Object[ctor.getParameterCount()];
 		for(int i = 0; i < args.length; i++){
 			Class<?> parameter = ctor.getParameterTypes()[i];
-			if(parameter.isAnnotationPresent(com.maxsavteam.ciconia.annotations.Component.class)){
+			if(parameter.isAnnotationPresent(Component.class)){
 				int finalI = i;
 				componentsDatabase.findComponent(parameter).ifPresent(c -> args[finalI] = c.getClassInstance());
 			}

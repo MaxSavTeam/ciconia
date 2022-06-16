@@ -1,8 +1,8 @@
 package com.maxsavteam.ciconia;
 
+import com.maxsavteam.ciconia.annotations.Component;
 import com.maxsavteam.ciconia.annotations.Mapping;
 import com.maxsavteam.ciconia.annotations.Param;
-import com.maxsavteam.ciconia.components.Component;
 import com.maxsavteam.ciconia.components.Controller;
 import com.maxsavteam.ciconia.components.ExecutableMethod;
 import org.reflections.Reflections;
@@ -25,21 +25,21 @@ class Parser {
 		this.configuration = configuration;
 	}
 
-	public List<Component> parse(){
-		Set<Class<?>> set = reflections.get(Scanners.SubTypes.of(Scanners.TypesAnnotated.with(com.maxsavteam.ciconia.annotations.Component.class)).asClass());
-		ArrayList<Component> components = new ArrayList<>();
+	public List<com.maxsavteam.ciconia.components.Component> parse(){
+		Set<Class<?>> set = reflections.get(Scanners.SubTypes.of(Scanners.TypesAnnotated.with(Component.class)).asClass());
+		ArrayList<com.maxsavteam.ciconia.components.Component> components = new ArrayList<>();
 		for(Class<?> cl : set){
 			components.add(processComponent(cl));
 		}
 		return components;
 	}
 
-	private Component processComponent(Class<?> cl){
-		Component component;
+	private com.maxsavteam.ciconia.components.Component processComponent(Class<?> cl){
+		com.maxsavteam.ciconia.components.Component component;
 		if(cl.isAnnotationPresent(Mapping.class)){
 			component = processControllerMapping(cl);
 		}else{
-			component = new Component(cl);
+			component = new com.maxsavteam.ciconia.components.Component(cl);
 		}
 		return component;
 	}
