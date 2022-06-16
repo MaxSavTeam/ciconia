@@ -3,8 +3,10 @@ plugins {
     id 'maven-publish'
 }
 
+apply from: "../common.gradle"
+
 group 'com.maxsavteam.ciconia'
-version '0.3.0'
+version libVersion
 
 repositories {
     mavenCentral()
@@ -15,8 +17,8 @@ repositories {
 
 jar {
     manifest {
-        attributes (
-                "Automatic-Module-Name" : "com.maxsavteam.ciconia"
+        attributes(
+                "Automatic-Module-Name": "com.maxsavteam.ciconia"
         )
     }
 }
@@ -52,37 +54,4 @@ java {
     targetCompatibility JavaVersion.VERSION_11
 }
 
-task sourcesJar(type: Jar) {
-    archiveClassifier.set('sources')
-    from sourceSets.main.java.srcDirs
-}
-
-task javadocJar(type: Jar) {
-    archiveClassifier.set('javadoc')
-    from javadoc.destinationDir
-}
-
-afterEvaluate {
-    publishing {
-        publications {
-            maven(MavenPublication) {
-                from components.java
-
-                artifact sourcesJar
-                artifact javadocJar
-
-                artifactId 'ciconia'
-            }
-        }
-
-        repositories {
-            maven {
-                url 'https://repo.maxsavteam.com/releases'
-                credentials {
-                    username 'admin'
-                    password "$System.env.REPOSILITE_ADMIN_TOKEN"
-                }
-            }
-        }
-    }
-}
+mstPublishing('ciconia')

@@ -4,11 +4,41 @@ repositories.ext.mstRepo = {
     }
 }
 
-publishing.ext.mstPublishing = {
-    publishing.publications.maven (MavenPublication) {
-        from components.java
+ext {
+    libVersion = '0.4.0-beta2'
+}
 
-        artifact sourcesJar
-        artifact javadocJar
+ext.mstPublishing = { artId ->
+    task sourcesJar(type: Jar) {
+        archiveClassifier.set('sources')
+        from sourceSets.main.java.srcDirs
+    }
+
+    task javadocJar(type: Jar) {
+        archiveClassifier.set('javadoc')
+        from javadoc.destinationDir
+    }
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                from components.java
+
+                artifact sourcesJar
+                artifact javadocJar
+
+                artifactId artId
+            }
+        }
+
+        repositories {
+            maven {
+                url 'https://repo.maxsavteam.com/releases'
+                credentials {
+                    username 'admin'
+                    password "$System.env.REPOSILITE_ADMIN_TOKEN"
+                }
+            }
+        }
     }
 }
