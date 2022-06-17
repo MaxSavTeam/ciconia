@@ -1,6 +1,6 @@
 package com.maxsavteam.ciconia.exceptions;
 
-public class ExecutionException extends RuntimeException {
+public class ExecutionException extends CiconiaRuntimeException {
 
 	public ExecutionException() {
 	}
