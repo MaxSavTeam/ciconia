@@ -1,10 +1,10 @@
 package com.maxsavteam.ciconia;
 
-import com.maxsavteam.ciconia.tree.Tree;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maxsavteam.ciconia.annotations.Param;
 import com.maxsavteam.ciconia.annotations.RequestMethod;
+import com.maxsavteam.ciconia.annotations.ValueConstants;
 import com.maxsavteam.ciconia.components.Component;
 import com.maxsavteam.ciconia.components.ComponentsDatabase;
 import com.maxsavteam.ciconia.components.Controller;
@@ -13,6 +13,7 @@ import com.maxsavteam.ciconia.exceptions.ExecutionException;
 import com.maxsavteam.ciconia.exceptions.IncompatibleClassException;
 import com.maxsavteam.ciconia.exceptions.MethodNotFoundException;
 import com.maxsavteam.ciconia.exceptions.ParameterNotPresentException;
+import com.maxsavteam.ciconia.tree.Tree;
 import com.maxsavteam.ciconia.utils.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -71,14 +72,18 @@ public class CiconiaHandler {
 				Param param = argument.getParam();
 				Object paramObject = params == null ? null : params.opt(param.value());
 				if (paramObject == null) {
-					throw new ParameterNotPresentException(
-							String.format(
-									"Parameter \"%s\" is not present, but required for method \"%s\" (%s)",
-									param.value(),
-									controller.getMappingName() + "." + method.getMappingName(),
-									controller.getComponentClass().getName() + "#" + method.getMethod().getName()
-							)
-					);
+					if(param.required()) {
+						throw new ParameterNotPresentException(
+								String.format(
+										"Parameter \"%s\" is not present, but required for method \"%s\" (%s)",
+										param.value(),
+										controller.getMappingName() + "." + method.getMappingName(),
+										controller.getComponentClass().getName() + "#" + method.getMethod().getName()
+								)
+						);
+					}else{
+						paramObject = ValueConstants.DEFAULT_NONE.equals(param.defaultValue()) ? null : param.defaultValue();
+					}
 				}
 				methodArguments[i] = convertToParameterType(argument.getArgumentType(), paramObject, param.value());
 			} else {
@@ -101,6 +106,8 @@ public class CiconiaHandler {
 	}
 
 	private Object convertToParameterType(Class<?> cl, Object param, String paramName){
+		if(param == null)
+			return null;
 		if(cl.isAssignableFrom(param.getClass()))
 			return param;
 		if(param instanceof JSONObject){

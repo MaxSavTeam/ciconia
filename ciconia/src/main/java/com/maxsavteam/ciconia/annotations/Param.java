@@ -11,4 +11,8 @@ public @interface Param {
 
 	String value();
 
+	boolean required() default true;
+
+	String defaultValue() default ValueConstants.DEFAULT_NONE;
+
 }
