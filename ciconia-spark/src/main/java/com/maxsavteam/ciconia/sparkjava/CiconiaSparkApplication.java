@@ -1,9 +1,9 @@
 package com.maxsavteam.ciconia.sparkjava;
 
 import com.maxsavteam.ciconia.CiconiaApplication;
-import com.maxsavteam.ciconia.CiconiaConfiguration;
 import com.maxsavteam.ciconia.CiconiaHandler;
 import com.maxsavteam.ciconia.annotations.RequestMethod;
+import com.maxsavteam.ciconia.exceptions.CiconiaRuntimeException;
 import org.json.JSONObject;
 import spark.Request;
 import spark.Response;
@@ -11,22 +11,33 @@ import spark.Spark;
 
 public class CiconiaSparkApplication {
 
-	public static void run(Class<?> clazz, CiconiaConfiguration configuration){
-		CiconiaConfiguration.Builder builder = new CiconiaConfiguration.Builder(configuration);
-		builder.setPathSeparator('/');
-		CiconiaApplication.run(clazz, builder.build());
+	private final CiconiaSparkConfiguration configuration;
+
+	public CiconiaSparkApplication(CiconiaSparkConfiguration configuration) {
+		this.configuration = configuration;
+	}
+
+	private void run(Class<?> clazz) {
+		CiconiaApplication.run(clazz, configuration);
 
 		Spark.get("*", (request, response) -> handleRequest(request, response, RequestMethod.GET));
 		Spark.post("*", (request, response) -> handleRequest(request, response, RequestMethod.POST));
+
+		if (configuration.getExceptionHandler() != null)
+			Spark.exception(CiconiaRuntimeException.class, configuration.getExceptionHandler());
 	}
 
-	private static String handleRequest(Request request, Response response, RequestMethod requestMethod){
+	public static void run(Class<?> clazz, CiconiaSparkConfiguration configuration) {
+		new CiconiaSparkApplication(configuration).run(clazz);
+	}
+
+	private Object handleRequest(Request request, Response response, RequestMethod requestMethod) {
 		String path = request.pathInfo().substring(1);
 
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("method", path);
 		JSONObject params = new JSONObject();
-		for(String attribute : request.queryParams())
+		for (String attribute : request.queryParams())
 			params.put(attribute, request.queryParams(attribute));
 		jsonObject.put("params", params);
 

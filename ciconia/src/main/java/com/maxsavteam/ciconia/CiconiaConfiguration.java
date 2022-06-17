@@ -4,7 +4,7 @@ public class CiconiaConfiguration {
 
 	private final char pathSeparator;
 
-	private CiconiaConfiguration(Builder builder) {
+	protected CiconiaConfiguration(Builder builder) {
 		this.pathSeparator = builder.pathSeparator;
 	}
 
@@ -14,7 +14,7 @@ public class CiconiaConfiguration {
 
 	public static class Builder {
 
-		private char pathSeparator = '.';
+		protected char pathSeparator = '.';
 
 		public Builder() {}
 

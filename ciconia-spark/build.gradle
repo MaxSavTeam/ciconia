@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id 'java-library'
     id 'maven-publish'
 }
 apply from: "../common.gradle"
@@ -18,7 +18,7 @@ dependencies {
 
     implementation project(":ciconia")
 
-    implementation 'com.sparkjava:spark-core:2.9.3'
+    api 'com.sparkjava:spark-core:2.9.3'
 
     // https://mvnrepository.com/artifact/org.json/json
     implementation 'org.json:json:20220320'
