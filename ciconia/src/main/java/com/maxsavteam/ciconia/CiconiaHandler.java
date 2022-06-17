@@ -36,14 +36,16 @@ public class CiconiaHandler {
 
 	private final Tree tree;
 	private final ComponentsDatabase componentsDb;
+	private final CiconiaConfiguration configuration;
 
-	private CiconiaHandler(Tree tree, ComponentsDatabase db) {
+	private CiconiaHandler(Tree tree, ComponentsDatabase db, CiconiaConfiguration configuration) {
 		this.tree = tree;
 		this.componentsDb = db;
+		this.configuration = configuration;
 	}
 
-	static void initialize(Tree tree, ComponentsDatabase componentsDatabase) {
-		instance = new CiconiaHandler(tree, componentsDatabase);
+	static void initialize(Tree tree, ComponentsDatabase componentsDatabase, CiconiaConfiguration configuration) {
+		instance = new CiconiaHandler(tree, componentsDatabase, configuration);
 	}
 
 	public Object handle(JSONObject jsonObject, RequestMethod requestMethod) {
@@ -77,7 +79,7 @@ public class CiconiaHandler {
 								String.format(
 										"Parameter \"%s\" is not present, but required for method \"%s\" (%s)",
 										param.value(),
-										controller.getMappingName() + "." + method.getMappingName(),
+										controller.getMappingName() + configuration.getPathSeparator() + method.getMappingName(),
 										controller.getComponentClass().getName() + "#" + method.getMethod().getName()
 								)
 						);
