@@ -52,7 +52,10 @@ class Parser {
 			Optional<ExecutableMethod> op = processMethod(method);
 			op.ifPresent(methods::add);
 		}
-		return new Controller(cl, annotation.value(), methods);
+		String mapping = annotation.value();
+		if(mapping.endsWith(String.valueOf(configuration.getPathSeparator())))
+			mapping = mapping.substring(0, mapping.length() - 1);
+		return new Controller(cl, mapping, methods);
 	}
 
 	private Optional<ExecutableMethod> processMethod(Method method){
@@ -85,7 +88,7 @@ class Parser {
 		String suf = "(" + entityName + ")";
 		if(value.contains(" "))
 			throw new IllegalArgumentException("Mapping should not contain whitespaces. " + suf);
-		if(value.startsWith(separator) || value.endsWith(separator))
+		if(value.startsWith(separator))
 			throw new IllegalArgumentException("Mapping should not start or end with separator. " + entityName);
 		if(value.contains(separator + separator))
 			throw new IllegalArgumentException("Mapping should not contain 2 (or more) separators in row. " + suf);
