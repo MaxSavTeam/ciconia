@@ -1,7 +1,7 @@
 package com.maxsavteam.ciconia.components;
 
-import com.maxsavteam.ciconia.annotations.Mapping;
-import com.maxsavteam.ciconia.annotations.Param;
+import com.maxsavteam.ciconia.annotation.Mapping;
+import com.maxsavteam.ciconia.annotation.Param;
 
 import java.lang.reflect.Method;
 import java.util.List;

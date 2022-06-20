@@ -1,4 +1,4 @@
-package com.maxsavteam.ciconia.annotations;
+package com.maxsavteam.ciconia.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

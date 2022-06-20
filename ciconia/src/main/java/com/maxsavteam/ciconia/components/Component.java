@@ -23,7 +23,7 @@ public class Component {
 	private void analyzeDependencies(){
 		Constructor<?> ctor = findPreferredConstructor();
 		for(Class<?> cl : ctor.getParameterTypes()){
-			if(cl.isAnnotationPresent(com.maxsavteam.ciconia.annotations.Component.class))
+			if(cl.isAnnotationPresent(com.maxsavteam.ciconia.annotation.Component.class))
 				dependenciesClasses.add(cl);
 		}
 	}

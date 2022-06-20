@@ -2,9 +2,9 @@ package com.maxsavteam.ciconia;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.maxsavteam.ciconia.annotations.Param;
-import com.maxsavteam.ciconia.annotations.RequestMethod;
-import com.maxsavteam.ciconia.annotations.ValueConstants;
+import com.maxsavteam.ciconia.annotation.Param;
+import com.maxsavteam.ciconia.annotation.RequestMethod;
+import com.maxsavteam.ciconia.annotation.ValueConstants;
 import com.maxsavteam.ciconia.components.Component;
 import com.maxsavteam.ciconia.components.ComponentsDatabase;
 import com.maxsavteam.ciconia.components.Controller;

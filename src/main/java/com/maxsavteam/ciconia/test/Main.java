@@ -3,10 +3,10 @@ package com.maxsavteam.ciconia.test;
 import com.maxsavteam.ciconia.CiconiaApplication;
 import com.maxsavteam.ciconia.CiconiaConfiguration;
 import com.maxsavteam.ciconia.CiconiaHandler;
-import com.maxsavteam.ciconia.annotations.Component;
-import com.maxsavteam.ciconia.annotations.Mapping;
-import com.maxsavteam.ciconia.annotations.Param;
-import com.maxsavteam.ciconia.annotations.RequestMethod;
+import com.maxsavteam.ciconia.annotation.Component;
+import com.maxsavteam.ciconia.annotation.Mapping;
+import com.maxsavteam.ciconia.annotation.Param;
+import com.maxsavteam.ciconia.annotation.RequestMethod;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

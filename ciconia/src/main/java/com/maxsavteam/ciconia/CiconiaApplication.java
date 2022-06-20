@@ -1,6 +1,6 @@
 package com.maxsavteam.ciconia;
 
-import com.maxsavteam.ciconia.annotations.RequestMethod;
+import com.maxsavteam.ciconia.annotation.RequestMethod;
 import com.maxsavteam.ciconia.exceptions.DuplicateMappingException;
 import com.maxsavteam.ciconia.graph.ComponentsDependenciesGraph;
 import com.maxsavteam.ciconia.tree.Tree;

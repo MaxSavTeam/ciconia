@@ -1,6 +1,6 @@
 package com.maxsavteam.ciconia.components;
 
-import com.maxsavteam.ciconia.annotations.RequestMethod;
+import com.maxsavteam.ciconia.annotation.RequestMethod;
 
 import java.util.Arrays;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.maxsavteam.ciconia.annotations;
+package com.maxsavteam.ciconia.annotation;
 
 public enum RequestMethod {
 

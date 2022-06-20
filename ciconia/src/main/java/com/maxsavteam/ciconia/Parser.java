@@ -1,8 +1,8 @@
 package com.maxsavteam.ciconia;
 
-import com.maxsavteam.ciconia.annotations.Component;
-import com.maxsavteam.ciconia.annotations.Mapping;
-import com.maxsavteam.ciconia.annotations.Param;
+import com.maxsavteam.ciconia.annotation.Component;
+import com.maxsavteam.ciconia.annotation.Mapping;
+import com.maxsavteam.ciconia.annotation.Param;
 import com.maxsavteam.ciconia.components.Controller;
 import com.maxsavteam.ciconia.components.ExecutableMethod;
 import org.reflections.Reflections;
