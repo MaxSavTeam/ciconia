@@ -2,8 +2,8 @@ package com.maxsavteam.ciconia.tree;
 
 import com.maxsavteam.ciconia.CiconiaConfiguration;
 import com.maxsavteam.ciconia.annotation.RequestMethod;
-import com.maxsavteam.ciconia.components.Controller;
-import com.maxsavteam.ciconia.components.ExecutableMethod;
+import com.maxsavteam.ciconia.component.Controller;
+import com.maxsavteam.ciconia.component.ExecutableMethod;
 import com.maxsavteam.ciconia.utils.Pair;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.maxsavteam.ciconia.components;
+package com.maxsavteam.ciconia.component;
 
 import com.maxsavteam.ciconia.exceptions.InstantiationException;
 

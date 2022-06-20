@@ -1,7 +1,7 @@
 package com.maxsavteam.ciconia;
 
 import com.maxsavteam.ciconia.annotation.Component;
-import com.maxsavteam.ciconia.components.ComponentsDatabase;
+import com.maxsavteam.ciconia.component.ComponentsDatabase;
 import com.maxsavteam.ciconia.exceptions.InstantiationException;
 
 import java.lang.reflect.Constructor;
@@ -11,9 +11,9 @@ class InstantiationUtils {
 
 	private InstantiationUtils(){}
 
-	public static ComponentsDatabase instantiateComponents(List<com.maxsavteam.ciconia.components.Component> components){
+	public static ComponentsDatabase instantiateComponents(List<com.maxsavteam.ciconia.component.Component> components){
 		ComponentsDatabase componentsDatabase = new ComponentsDatabase();
-		for(com.maxsavteam.ciconia.components.Component component : components) {
+		for(com.maxsavteam.ciconia.component.Component component : components) {
 			Constructor<?> ctor = component.findPreferredConstructor();
 			instantiate(component, ctor, componentsDatabase);
 			componentsDatabase.addComponent(component);
@@ -21,7 +21,7 @@ class InstantiationUtils {
 		return componentsDatabase;
 	}
 
-	public static void instantiate(com.maxsavteam.ciconia.components.Component component, Constructor<?> ctor, ComponentsDatabase componentsDatabase){
+	public static void instantiate(com.maxsavteam.ciconia.component.Component component, Constructor<?> ctor, ComponentsDatabase componentsDatabase){
 		Object[] args = new Object[ctor.getParameterCount()];
 		for(int i = 0; i < args.length; i++){
 			Class<?> parameter = ctor.getParameterTypes()[i];

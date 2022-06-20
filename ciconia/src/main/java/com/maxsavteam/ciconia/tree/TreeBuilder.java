@@ -1,7 +1,7 @@
 package com.maxsavteam.ciconia.tree;
 
 import com.maxsavteam.ciconia.CiconiaConfiguration;
-import com.maxsavteam.ciconia.components.Controller;
+import com.maxsavteam.ciconia.component.Controller;
 
 import java.util.List;
 

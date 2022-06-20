@@ -1,6 +1,6 @@
 package com.maxsavteam.ciconia.graph;
 
-import com.maxsavteam.ciconia.components.Component;
+import com.maxsavteam.ciconia.component.Component;
 import com.maxsavteam.ciconia.exceptions.InstantiationException;
 import com.maxsavteam.graph.Graph;
 
