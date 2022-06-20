@@ -1,4 +1,4 @@
-package com.maxsavteam.ciconia.exceptions;
+package com.maxsavteam.ciconia.exception;
 
 public class ParameterNotPresentException extends ExecutionException {
 

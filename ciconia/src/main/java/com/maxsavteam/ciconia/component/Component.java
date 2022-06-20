@@ -1,6 +1,6 @@
 package com.maxsavteam.ciconia.component;
 
-import com.maxsavteam.ciconia.exceptions.InstantiationException;
+import com.maxsavteam.ciconia.exception.InstantiationException;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;

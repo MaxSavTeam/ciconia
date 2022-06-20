@@ -2,7 +2,7 @@ package com.maxsavteam.ciconia;
 
 import com.maxsavteam.ciconia.annotation.Component;
 import com.maxsavteam.ciconia.component.ComponentsDatabase;
-import com.maxsavteam.ciconia.exceptions.InstantiationException;
+import com.maxsavteam.ciconia.exception.InstantiationException;
 
 import java.lang.reflect.Constructor;
 import java.util.List;

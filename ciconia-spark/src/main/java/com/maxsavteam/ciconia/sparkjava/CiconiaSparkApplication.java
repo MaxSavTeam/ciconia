@@ -3,7 +3,7 @@ package com.maxsavteam.ciconia.sparkjava;
 import com.maxsavteam.ciconia.CiconiaApplication;
 import com.maxsavteam.ciconia.CiconiaHandler;
 import com.maxsavteam.ciconia.annotation.RequestMethod;
-import com.maxsavteam.ciconia.exceptions.CiconiaRuntimeException;
+import com.maxsavteam.ciconia.exception.CiconiaRuntimeException;
 import org.json.JSONObject;
 import spark.Request;
 import spark.Response;

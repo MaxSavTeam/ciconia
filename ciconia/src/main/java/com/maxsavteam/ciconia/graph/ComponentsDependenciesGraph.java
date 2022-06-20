@@ -1,7 +1,7 @@
 package com.maxsavteam.ciconia.graph;
 
 import com.maxsavteam.ciconia.component.Component;
-import com.maxsavteam.ciconia.exceptions.InstantiationException;
+import com.maxsavteam.ciconia.exception.InstantiationException;
 import com.maxsavteam.graph.Graph;
 
 import java.util.HashMap;
