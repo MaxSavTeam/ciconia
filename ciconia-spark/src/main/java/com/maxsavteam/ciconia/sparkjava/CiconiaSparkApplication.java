@@ -32,7 +32,7 @@ public class CiconiaSparkApplication {
 	}
 
 	private Object handleRequest(Request request, Response response, RequestMethod requestMethod) {
-		String path = request.pathInfo().substring(1);
+		String path = request.pathInfo();
 
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("method", path);

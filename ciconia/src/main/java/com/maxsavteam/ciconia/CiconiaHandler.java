@@ -51,6 +51,9 @@ public class CiconiaHandler {
 	public Object handle(JSONObject jsonObject, RequestMethod requestMethod) {
 		String methodName = jsonObject.getString("method");
 
+		if(methodName.startsWith(String.valueOf(configuration.getPathSeparator())))
+			methodName = methodName.substring(1);
+
 		Optional<Tree.MethodSearchResult> op = tree.findMethod(methodName, requestMethod);
 		if (op.isEmpty())
 			throw new MethodNotFoundException(methodName + " (" + requestMethod + ")");
