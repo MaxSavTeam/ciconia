@@ -3,8 +3,10 @@ package com.maxsavteam.ciconia;
 import com.maxsavteam.ciconia.annotation.Component;
 import com.maxsavteam.ciconia.annotation.Mapping;
 import com.maxsavteam.ciconia.annotation.Param;
+import com.maxsavteam.ciconia.annotation.PathVariable;
 import com.maxsavteam.ciconia.component.Controller;
 import com.maxsavteam.ciconia.component.ExecutableMethod;
+import com.maxsavteam.ciconia.component.MappingWrapper;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 
@@ -69,18 +71,23 @@ class Parser {
 		ArrayList<ExecutableMethod.Argument> arguments = new ArrayList<>();
 		for(int i = 0; i < parameterTypes.length; i++){
 			Annotation[] annotations = parameterAnnotations[i];
-			Param paramAnnotation = null;
-			for(Annotation a : annotations){
-				if(a instanceof Param){
-					paramAnnotation = (Param) a;
-					break;
-				}
-			}
+			Param paramAnnotation = findAnnotation(annotations, Param.class);
+			PathVariable pathVariableAnnotation = findAnnotation(annotations, PathVariable.class);
 			Class<?> parameterType = parameterTypes[i];
-			ExecutableMethod.Argument argument = new ExecutableMethod.Argument(parameterType, paramAnnotation);
+			ExecutableMethod.Argument argument = new ExecutableMethod.Argument(parameterType, paramAnnotation, pathVariableAnnotation);
 			arguments.add(argument);
 		}
-		return Optional.of(new ExecutableMethod(method, mapping, arguments));
+		MappingWrapper mappingWrapper = new MappingWrapper(mapping);
+		return Optional.of(new ExecutableMethod(method, mappingWrapper, arguments));
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <T extends Annotation> T findAnnotation(Annotation[] annotations, Class<T> annotationClass){
+		for(Annotation annotation : annotations){
+			if(annotationClass.isInstance(annotation))
+				return (T) annotation;
+		}
+		return null;
 	}
 
 	private static void requireValidMapping(String value, String entityName, char pathSeparator){

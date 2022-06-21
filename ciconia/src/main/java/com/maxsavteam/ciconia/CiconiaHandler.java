@@ -14,13 +14,13 @@ import com.maxsavteam.ciconia.exception.IncompatibleClassException;
 import com.maxsavteam.ciconia.exception.MethodNotFoundException;
 import com.maxsavteam.ciconia.exception.ParameterNotPresentException;
 import com.maxsavteam.ciconia.tree.Tree;
-import com.maxsavteam.ciconia.utils.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class CiconiaHandler {
@@ -51,21 +51,23 @@ public class CiconiaHandler {
 	public Object handle(JSONObject jsonObject, RequestMethod requestMethod) {
 		String methodName = jsonObject.getString("method");
 
-		Optional<Pair<Controller, ExecutableMethod>> op = tree.findMethod(methodName, requestMethod);
+		Optional<Tree.MethodSearchResult> op = tree.findMethod(methodName, requestMethod);
 		if (op.isEmpty())
 			throw new MethodNotFoundException(methodName + " (" + requestMethod + ")");
-		Controller controller = op.get().getFirst();
-		ExecutableMethod executableMethod = op.get().getSecond();
+		Tree.MethodSearchResult result = op.get();
+		Controller controller = result.getController();
+		ExecutableMethod executableMethod = result.getMethod();
+		Map<String, String> pathVariablesMap = result.getPathVariablesMap();
 
 		JSONObject paramsJsonObject = jsonObject.optJSONObject("params");
 		try {
-			return processMethod(executableMethod, paramsJsonObject, controller);
+			return processMethod(executableMethod, paramsJsonObject, controller, pathVariablesMap);
 		} catch (InvocationTargetException | IllegalAccessException e) {
 			throw new ExecutionException(e);
 		}
 	}
 
-	private Object processMethod(ExecutableMethod method, JSONObject params, Controller controller) throws InvocationTargetException, IllegalAccessException {
+	private Object processMethod(ExecutableMethod method, JSONObject params, Controller controller, Map<String, String> pathVariablesMap) throws InvocationTargetException, IllegalAccessException {
 		List<ExecutableMethod.Argument> arguments = method.getArguments();
 		Object[] methodArguments = new Object[arguments.size()];
 		for (int i = 0; i < arguments.size(); i++) {
@@ -74,20 +76,24 @@ public class CiconiaHandler {
 				Param param = argument.getParam();
 				Object paramObject = params == null ? null : params.opt(param.value());
 				if (paramObject == null) {
-					if(param.required()) {
+					if (param.required()) {
 						throw new ParameterNotPresentException(
 								String.format(
 										"Parameter \"%s\" is not present, but required for method \"%s\" (%s)",
 										param.value(),
-										controller.getMappingName() + configuration.getPathSeparator() + method.getMappingName(),
+										controller.getMappingName() + configuration.getPathSeparator() + method.getMappingWrapper().getMappingName(),
 										controller.getComponentClass().getName() + "#" + method.getMethod().getName()
 								)
 						);
-					}else{
+					} else {
 						paramObject = ValueConstants.DEFAULT_NONE.equals(param.defaultValue()) ? null : param.defaultValue();
 					}
 				}
 				methodArguments[i] = convertToParameterType(argument.getArgumentType(), paramObject, param.value());
+			}else if(argument.isPathVariable()){
+				String variableName = argument.getPathVariable().value();
+				String variableValue = pathVariablesMap.get(variableName);
+				methodArguments[i] = convertToParameterType(argument.getArgumentType(), variableValue, variableName);
 			} else {
 				Component component = findSuitableComponent(argument.getArgumentType());
 				if(component != null){

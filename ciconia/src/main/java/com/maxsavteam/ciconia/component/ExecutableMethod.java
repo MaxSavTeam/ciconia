@@ -1,7 +1,7 @@
 package com.maxsavteam.ciconia.component;
 
-import com.maxsavteam.ciconia.annotation.Mapping;
 import com.maxsavteam.ciconia.annotation.Param;
+import com.maxsavteam.ciconia.annotation.PathVariable;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -10,19 +10,16 @@ public class ExecutableMethod {
 
 	private final Method method;
 	private final List<Argument> arguments;
-	private final Mapping mapping;
-	public ExecutableMethod(Method method, Mapping mapping, List<Argument> arguments) {
+	private final MappingWrapper mappingWrapper;
+
+	public ExecutableMethod(Method method, MappingWrapper mappingWrapper, List<Argument> arguments) {
 		this.method = method;
 		this.arguments = arguments;
-		this.mapping = mapping;
+		this.mappingWrapper = mappingWrapper;
 	}
 
-	public String getMappingName() {
-		return mapping.value();
-	}
-
-	public Mapping getMapping() {
-		return mapping;
+	public MappingWrapper getMappingWrapper() {
+		return mappingWrapper;
 	}
 
 	public List<Argument> getArguments() {
@@ -36,14 +33,13 @@ public class ExecutableMethod {
 	public static class Argument {
 
 		private final Class<?> argumentType;
-
-		private final boolean isParameterized;
 		private final Param param;
+		private final PathVariable pathVariable;
 
-		public Argument(Class<?> argumentType, Param param) {
+		public Argument(Class<?> argumentType, Param param, PathVariable pathVariable) {
 			this.argumentType = argumentType;
 			this.param = param;
-			this.isParameterized = param != null;
+			this.pathVariable = pathVariable;
 		}
 
 		public Class<?> getArgumentType() {
@@ -51,7 +47,15 @@ public class ExecutableMethod {
 		}
 
 		public boolean isParameterized() {
-			return isParameterized;
+			return param != null;
+		}
+
+		public boolean isPathVariable() {
+			return pathVariable != null;
+		}
+
+		public PathVariable getPathVariable() {
+			return pathVariable;
 		}
 
 		public Param getParam() {

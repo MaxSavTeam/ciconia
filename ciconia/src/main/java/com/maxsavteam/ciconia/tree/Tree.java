@@ -4,7 +4,6 @@ import com.maxsavteam.ciconia.CiconiaConfiguration;
 import com.maxsavteam.ciconia.annotation.RequestMethod;
 import com.maxsavteam.ciconia.component.Controller;
 import com.maxsavteam.ciconia.component.ExecutableMethod;
-import com.maxsavteam.ciconia.utils.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,12 +49,12 @@ public class Tree {
 		addController(controller, mappingParts, partPosition + 1, nextNode);
 	}
 
-	public Optional<Pair<Controller, ExecutableMethod>> findMethod(String methodName, RequestMethod requestMethod){
+	public Optional<MethodSearchResult> findMethod(String methodName, RequestMethod requestMethod){
 		List<String> parts = splitMapping(methodName);
 		return findMethod(headNode, parts, 0, requestMethod);
 	}
 
-	public Optional<Pair<Controller, ExecutableMethod>> findMethod(Node node, List<String> mappingParts, int partPosition, RequestMethod requestMethod){
+	public Optional<MethodSearchResult> findMethod(Node node, List<String> mappingParts, int partPosition, RequestMethod requestMethod){
 		if(partPosition >= mappingParts.size())
 			return Optional.empty();
 
@@ -63,7 +62,10 @@ public class Tree {
 		for(Controller controller : node.getControllers()){
 			Optional<ExecutableMethod> op = controller.findMethodByMapping(methodMapping, requestMethod);
 			if(op.isPresent()){
-				return Optional.of(new Pair<>(controller, op.get()));
+				ExecutableMethod method = op.get();
+				Map<String, String> pathVariablesMap = method.getMappingWrapper().extractPathVariables(methodMapping);
+				MethodSearchResult result = new MethodSearchResult(controller, method, pathVariablesMap);
+				return Optional.of(result);
 			}
 		}
 		String part = mappingParts.get(partPosition);
@@ -104,6 +106,30 @@ public class Tree {
 
 		public List<Controller> getControllers() {
 			return controllers;
+		}
+	}
+
+	public static class MethodSearchResult {
+		private final Controller controller;
+		private final ExecutableMethod method;
+		private final Map<String, String> pathVariablesMap;
+
+		public MethodSearchResult(Controller controller, ExecutableMethod method, Map<String, String> pathVariablesMap) {
+			this.controller = controller;
+			this.method = method;
+			this.pathVariablesMap = pathVariablesMap;
+		}
+
+		public Controller getController() {
+			return controller;
+		}
+
+		public ExecutableMethod getMethod() {
+			return method;
+		}
+
+		public Map<String, String> getPathVariablesMap() {
+			return pathVariablesMap;
 		}
 	}
 

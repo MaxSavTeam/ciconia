@@ -27,10 +27,8 @@ public class Controller extends Component {
 	public Optional<ExecutableMethod> findMethodByMapping(String mappingName, RequestMethod requestMethod){
 		return executableMethods
 				.stream()
-				.filter(
-						m -> m.getMappingName().equals(mappingName)
-								&& Arrays.asList(m.getMapping().method()).contains(requestMethod)
-				)
+				.filter(method -> method.getMappingWrapper().containsRequestMethod(requestMethod))
+				.filter(method -> method.getMappingWrapper().matches(mappingName))
 				.findFirst();
 	}
 

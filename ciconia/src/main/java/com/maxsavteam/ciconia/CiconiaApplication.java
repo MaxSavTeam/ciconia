@@ -1,6 +1,7 @@
 package com.maxsavteam.ciconia;
 
 import com.maxsavteam.ciconia.annotation.RequestMethod;
+import com.maxsavteam.ciconia.annotation.ValueConstants;
 import com.maxsavteam.ciconia.exception.DuplicateMappingException;
 import com.maxsavteam.ciconia.graph.ComponentsDependenciesGraph;
 import com.maxsavteam.ciconia.tree.Tree;
@@ -71,16 +72,19 @@ public class CiconiaApplication {
 		return sb.toString();
 	}
 
-	private static void requireNoDuplicateMappings(List<Controller> controllers){
+	private void requireNoDuplicateMappings(List<Controller> controllers){
 		Map<String, ArrayList<Pair<RequestMethod, String>>> map = new HashMap<>();
 		for(Controller controller : controllers){
 			for(ExecutableMethod method : controller.getExecutableMethods()){
 				String methodName = controller.getComponentClass().getName() + "#" + method.getMethod().getName();
-				String mapping = controller.getMappingName() + "." + method.getMappingName();
+				String originalMapping = controller.getMappingName() + configuration.getPathSeparator() + method.getMappingWrapper().getMappingName();
+				String mapping = originalMapping.replaceAll("\\{\\w+}", ValueConstants.DEFAULT_NONE);
+
 				ArrayList<Pair<RequestMethod, String>> mapRequestMethods = map.getOrDefault(mapping, new ArrayList<>());
 				if(mapRequestMethods.isEmpty())
 					map.put(mapping, mapRequestMethods);
-				for(RequestMethod requestMethod : method.getMapping().method()){
+
+				for(RequestMethod requestMethod : method.getMappingWrapper().getMapping().method()){
 					Optional<Pair<RequestMethod, String>> op = mapRequestMethods
 							.stream()
 							.filter(p -> p.getFirst().equals(requestMethod))
@@ -92,7 +96,7 @@ public class CiconiaApplication {
 										"%s\n" +
 										"and\n" +
 										"%s",
-								method.getMapping().value(),
+								method.getMappingWrapper().getMappingName(),
 								requestMethod,
 								methodName,
 								op.get().getSecond()
