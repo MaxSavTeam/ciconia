@@ -1,11 +1,9 @@
 package com.maxsavteam.ciconia.component;
 
-import com.maxsavteam.ciconia.annotation.Mapping;
 import com.maxsavteam.ciconia.annotation.RequestMethod;
 import com.maxsavteam.ciconia.exception.InvalidPathVariableException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,29 +14,31 @@ public class MappingWrapper {
 
 	private static final Pattern VARIABLE_NAME_PATTERN = Pattern.compile("^[a-zA-Z_]+$");
 
-	private final Mapping mapping;
+	private final String mappingName;
+	
+	private final List<RequestMethod> requestMethods;
 
 	private final List<String> pathVariables;
 
 	private final Pattern pattern;
 
-	public MappingWrapper(Mapping mapping) {
-		this.mapping = mapping;
+	public MappingWrapper(String mappingName, List<RequestMethod> requestMethods) {
+		this.mappingName = mappingName;
+		this.requestMethods = requestMethods;
 		pathVariables = resolvePathVariables();
 		pattern = createRegexPattern();
 	}
 
 	private List<String> resolvePathVariables() {
 		List<String> variables = new ArrayList<>();
-		String path = mapping.value();
-		for (int i = 0; i < path.length(); i++) {
-			char c = path.charAt(i);
+		for (int i = 0; i < mappingName.length(); i++) {
+			char c = mappingName.charAt(i);
 			if (c == '{') {
-				int end = path.indexOf('}', i);
+				int end = mappingName.indexOf('}', i);
 				if (end == -1) {
-					throw new InvalidPathVariableException("Unclosed path variable at position " + i + ": " + path);
+					throw new InvalidPathVariableException("Unclosed path variable at position " + i + ": " + mappingName);
 				}
-				String variableName = path.substring(i + 1, end);
+				String variableName = mappingName.substring(i + 1, end);
 
 				if (!VARIABLE_NAME_PATTERN.matcher(variableName).matches()) {
 					throw new InvalidPathVariableException(
@@ -63,19 +63,18 @@ public class MappingWrapper {
 	}
 
 	private Pattern createRegexPattern() {
-		String path = mapping.value();
 		final String variablePattern = "(?<%s>[\\w]*)";
 		StringBuilder sb = new StringBuilder();
 		boolean escapeIntervalStarted = false;
-		for (int i = 0; i < path.length(); i++) {
-			char c = path.charAt(i);
+		for (int i = 0; i < mappingName.length(); i++) {
+			char c = mappingName.charAt(i);
 			if (c == '{') {
 				if (escapeIntervalStarted) {
 					sb.append("\\E");
 					escapeIntervalStarted = false;
 				}
-				int end = path.indexOf('}', i); // never -1
-				String variableName = path.substring(i + 1, end);
+				int end = mappingName.indexOf('}', i); // never -1
+				String variableName = mappingName.substring(i + 1, end);
 				sb.append(String.format(variablePattern, variableName));
 				i = end;
 			} else {
@@ -93,20 +92,20 @@ public class MappingWrapper {
 		return Pattern.compile("^" + sb + "$");
 	}
 
-	public Mapping getMapping() {
-		return mapping;
-	}
-
 	public String getMappingName() {
-		return mapping.value();
+		return mappingName;
 	}
 
 	public List<String> getPathVariables() {
 		return pathVariables;
 	}
 
+	public List<RequestMethod> getRequestMethods() {
+		return requestMethods;
+	}
+
 	public boolean containsRequestMethod(RequestMethod requestMethod) {
-		for (RequestMethod method : mapping.method()) {
+		for (RequestMethod method : requestMethods) {
 			if (method == requestMethod) {
 				return true;
 			}

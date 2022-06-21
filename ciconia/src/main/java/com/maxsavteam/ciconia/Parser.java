@@ -55,7 +55,10 @@ class Parser {
 			op.ifPresent(methods::add);
 		}
 		String mapping = annotation.value();
-		if(mapping.endsWith(String.valueOf(configuration.getPathSeparator())))
+		String pathSeparator = String.valueOf(configuration.getPathSeparator());
+		if(mapping.startsWith(pathSeparator))
+			mapping = mapping.substring(1);
+		if(mapping.endsWith(pathSeparator))
 			mapping = mapping.substring(0, mapping.length() - 1);
 		return new Controller(cl, mapping, methods);
 	}
@@ -77,7 +80,12 @@ class Parser {
 			ExecutableMethod.Argument argument = new ExecutableMethod.Argument(parameterType, paramAnnotation, pathVariableAnnotation);
 			arguments.add(argument);
 		}
-		MappingWrapper mappingWrapper = new MappingWrapper(mapping);
+
+		String mappingName = mapping.value();
+		if(mappingName.startsWith(String.valueOf(configuration.getPathSeparator())))
+			mappingName = mappingName.substring(1);
+
+		MappingWrapper mappingWrapper = new MappingWrapper(mappingName, List.of(mapping.method()));
 		return Optional.of(new ExecutableMethod(method, mappingWrapper, arguments));
 	}
 
@@ -95,8 +103,6 @@ class Parser {
 		String suf = "(" + entityName + ")";
 		if(value.contains(" "))
 			throw new IllegalArgumentException("Mapping should not contain whitespaces. " + suf);
-		if(value.startsWith(separator))
-			throw new IllegalArgumentException("Mapping should not start or end with separator. " + entityName);
 		if(value.contains(separator + separator))
 			throw new IllegalArgumentException("Mapping should not contain 2 (or more) separators in row. " + suf);
 	}

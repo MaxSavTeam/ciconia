@@ -12,7 +12,7 @@ public class EmptyMappingController {
 		return "root";
 	}
 
-	@Mapping("hello")
+	@Mapping("/hello")
 	public String hello(){
 		return "hello";
 	}

@@ -84,7 +84,7 @@ public class CiconiaApplication {
 				if(mapRequestMethods.isEmpty())
 					map.put(mapping, mapRequestMethods);
 
-				for(RequestMethod requestMethod : method.getMappingWrapper().getMapping().method()){
+				for(RequestMethod requestMethod : method.getMappingWrapper().getRequestMethods()){
 					Optional<Pair<RequestMethod, String>> op = mapRequestMethods
 							.stream()
 							.filter(p -> p.getFirst().equals(requestMethod))
