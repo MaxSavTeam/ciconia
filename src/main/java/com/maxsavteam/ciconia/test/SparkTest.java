@@ -6,7 +6,7 @@ import com.maxsavteam.ciconia.annotation.PathVariable;
 import com.maxsavteam.ciconia.sparkjava.CiconiaSparkApplication;
 import com.maxsavteam.ciconia.sparkjava.CiconiaSparkConfiguration;
 
-@Mapping("spark")
+@Mapping
 @Component
 public class SparkTest {
 

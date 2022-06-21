@@ -36,7 +36,7 @@ public class Tree {
 	}
 
 	private void addController(Controller controller, List<String> mappingParts, int partPosition, Node node){
-		if(partPosition >= mappingParts.size()){
+		if(partPosition >= mappingParts.size() || mappingParts.get(partPosition).isEmpty()){
 			node.addController(controller);
 			return;
 		}
