@@ -5,7 +5,7 @@ repositories.ext.mstRepo = {
 }
 
 ext {
-    libVersion = '0.5.0'
+    libVersion = '0.6.0'
 }
 
 ext.mstPublishing = { artId ->
