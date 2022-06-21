@@ -2,6 +2,7 @@ package com.maxsavteam.ciconia;
 
 import com.maxsavteam.ciconia.annotation.RequestMethod;
 import com.maxsavteam.ciconia.annotation.ValueConstants;
+import com.maxsavteam.ciconia.component.ObjectsDatabase;
 import com.maxsavteam.ciconia.exception.DuplicateMappingException;
 import com.maxsavteam.ciconia.graph.ComponentsDependenciesGraph;
 import com.maxsavteam.ciconia.tree.Tree;
@@ -49,11 +50,12 @@ public class CiconiaApplication {
 
 		List<Component> topologicalOrder = graph.getInTopologicalOrder();
 
-		ComponentsDatabase componentsDatabase
-				= InstantiationUtils.instantiateComponents(topologicalOrder);
+		ObjectsDatabase objectsDatabase = new ObjectsDatabase();
+
+		InstantiationUtils.instantiateComponents(topologicalOrder, objectsDatabase);
 
 		Tree tree = TreeBuilder.build(configuration, controllers);
-		CiconiaHandler.initialize(tree, componentsDatabase, configuration);
+		CiconiaHandler.initialize(tree, objectsDatabase, configuration);
 	}
 
 	private String getPrettyCycle(List<Component> cycle){

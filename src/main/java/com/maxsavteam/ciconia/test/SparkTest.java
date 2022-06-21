@@ -24,9 +24,10 @@ public class SparkTest {
 
 	@Mapping("hello-{name}")
 	public String hello(
-			@PathVariable("name") String name
+			@PathVariable("name") String name,
+			TestComponent testComponent
 	){
-		return "hello, " + name;
+		return testComponent.test(name);
 	}
 
 }

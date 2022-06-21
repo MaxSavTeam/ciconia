@@ -5,10 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maxsavteam.ciconia.annotation.Param;
 import com.maxsavteam.ciconia.annotation.RequestMethod;
 import com.maxsavteam.ciconia.annotation.ValueConstants;
-import com.maxsavteam.ciconia.component.Component;
-import com.maxsavteam.ciconia.component.ComponentsDatabase;
 import com.maxsavteam.ciconia.component.Controller;
 import com.maxsavteam.ciconia.component.ExecutableMethod;
+import com.maxsavteam.ciconia.component.ObjectsDatabase;
 import com.maxsavteam.ciconia.exception.ExecutionException;
 import com.maxsavteam.ciconia.exception.IncompatibleClassException;
 import com.maxsavteam.ciconia.exception.MethodNotFoundException;
@@ -17,6 +16,7 @@ import com.maxsavteam.ciconia.tree.Tree;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,20 +35,24 @@ public class CiconiaHandler {
 	}
 
 	private final Tree tree;
-	private final ComponentsDatabase componentsDb;
+	private final ObjectsDatabase objectsDatabase;
 	private final CiconiaConfiguration configuration;
 
-	private CiconiaHandler(Tree tree, ComponentsDatabase db, CiconiaConfiguration configuration) {
+	private CiconiaHandler(Tree tree, ObjectsDatabase db, CiconiaConfiguration configuration) {
 		this.tree = tree;
-		this.componentsDb = db;
+		this.objectsDatabase = db;
 		this.configuration = configuration;
 	}
 
-	static void initialize(Tree tree, ComponentsDatabase componentsDatabase, CiconiaConfiguration configuration) {
-		instance = new CiconiaHandler(tree, componentsDatabase, configuration);
+	static void initialize(Tree tree, ObjectsDatabase objectsDatabase, CiconiaConfiguration configuration) {
+		instance = new CiconiaHandler(tree, objectsDatabase, configuration);
 	}
 
-	public Object handle(JSONObject jsonObject, RequestMethod requestMethod) {
+	public Object handle(JSONObject jsonObject, RequestMethod requestMethod){
+		return handle(jsonObject, requestMethod, new ObjectsDatabase());
+	}
+
+	public Object handle(JSONObject jsonObject, RequestMethod requestMethod, @Nonnull ObjectsDatabase contextualDatabase) {
 		String methodName = jsonObject.getString("method");
 
 		if(methodName.startsWith(String.valueOf(configuration.getPathSeparator())))
@@ -62,15 +66,27 @@ public class CiconiaHandler {
 		ExecutableMethod executableMethod = result.getMethod();
 		Map<String, String> pathVariablesMap = result.getPathVariablesMap();
 
-		JSONObject paramsJsonObject = jsonObject.optJSONObject("params");
+		JSONObject paramsJsonObject = jsonObject.optJSONObject("params", new JSONObject());
+
+		MethodExecutionContext context = new MethodExecutionContext(executableMethod, controller);
+		context.setParams(paramsJsonObject);
+		context.setPathVariablesMap(pathVariablesMap);
+		context.setContextualDatabase(contextualDatabase);
+
 		try {
-			return processMethod(executableMethod, paramsJsonObject, controller, pathVariablesMap);
+			return processMethod(context);
 		} catch (InvocationTargetException | IllegalAccessException e) {
 			throw new ExecutionException(e);
 		}
 	}
 
-	private Object processMethod(ExecutableMethod method, JSONObject params, Controller controller, Map<String, String> pathVariablesMap) throws InvocationTargetException, IllegalAccessException {
+	private Object processMethod(MethodExecutionContext context) throws InvocationTargetException, IllegalAccessException {
+		ExecutableMethod method = context.getExecutableMethod();
+		Controller controller = context.getController();
+		JSONObject params = context.getParams();
+		Map<String, String> pathVariablesMap = context.getPathVariablesMap();
+		ObjectsDatabase contextualDatabase = context.getContextualDatabase();
+
 		List<ExecutableMethod.Argument> arguments = method.getArguments();
 		Object[] methodArguments = new Object[arguments.size()];
 		for (int i = 0; i < arguments.size(); i++) {
@@ -98,10 +114,10 @@ public class CiconiaHandler {
 				String variableValue = pathVariablesMap.get(variableName);
 				methodArguments[i] = convertToParameterType(argument.getArgumentType(), variableValue, variableName);
 			} else {
-				Component component = findSuitableComponent(argument.getArgumentType());
-				if(component != null){
-					methodArguments[i] = component.getClassInstance();
-				}
+				Optional<Object> op = objectsDatabase.findObject(argument.getArgumentType());
+				methodArguments[i] = op
+						.or(()->contextualDatabase.findObject(argument.getArgumentType()))
+						.orElse(null);
 			}
 		}
 
@@ -109,11 +125,6 @@ public class CiconiaHandler {
 		if(method.getMethod().getReturnType().equals(Void.TYPE))
 			return VOID;
 		return result;
-	}
-
-	private Component findSuitableComponent(Class<?> cl){
-		Optional<Component> op = componentsDb.findComponent(cl);
-		return op.orElse(null);
 	}
 
 	private Object convertToParameterType(Class<?> cl, Object param, String paramName){
@@ -150,6 +161,52 @@ public class CiconiaHandler {
 						cl.getName()
 				)
 		);
+	}
+
+	private static class MethodExecutionContext {
+		private final ExecutableMethod executableMethod;
+		private final Controller controller;
+
+		private JSONObject params;
+		private Map<String, String> pathVariablesMap;
+		private ObjectsDatabase contextualDatabase;
+
+		public MethodExecutionContext(ExecutableMethod executableMethod, Controller controller) {
+			this.executableMethod = executableMethod;
+			this.controller = controller;
+		}
+
+		public ExecutableMethod getExecutableMethod() {
+			return executableMethod;
+		}
+
+		public Controller getController() {
+			return controller;
+		}
+
+		public JSONObject getParams() {
+			return params;
+		}
+
+		public void setParams(JSONObject params) {
+			this.params = params;
+		}
+
+		public Map<String, String> getPathVariablesMap() {
+			return pathVariablesMap;
+		}
+
+		public void setPathVariablesMap(Map<String, String> pathVariablesMap) {
+			this.pathVariablesMap = pathVariablesMap;
+		}
+
+		public ObjectsDatabase getContextualDatabase() {
+			return contextualDatabase;
+		}
+
+		public void setContextualDatabase(ObjectsDatabase contextualDatabase) {
+			this.contextualDatabase = contextualDatabase;
+		}
 	}
 
 }
