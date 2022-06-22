@@ -21,6 +21,8 @@ public class CiconiaSparkApplication {
 	private void run(Class<?> clazz) {
 		CiconiaApplication.run(clazz, configuration);
 
+		Spark.port(configuration.getPort());
+
 		Spark.get("*", (request, response) -> handleRequest(request, response, RequestMethod.GET));
 		Spark.post("*", (request, response) -> handleRequest(request, response, RequestMethod.POST));
 

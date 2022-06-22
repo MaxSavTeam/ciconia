@@ -1,23 +1,33 @@
 package com.maxsavteam.ciconia.sparkjava;
 
 import com.maxsavteam.ciconia.CiconiaConfiguration;
+import spark.Spark;
 
 public class CiconiaSparkConfiguration extends CiconiaConfiguration {
 
 	private final CiconiaExceptionHandler exceptionHandler;
 
+	private final int port;
+
 	protected CiconiaSparkConfiguration(Builder builder) {
 		super(builder);
 		this.exceptionHandler = builder.exceptionHandler;
+		this.port = builder.port;
 	}
 
 	public CiconiaExceptionHandler getExceptionHandler() {
 		return exceptionHandler;
 	}
 
+	public int getPort() {
+		return port;
+	}
+
 	public static class Builder extends CiconiaConfiguration.Builder {
 
 		private CiconiaExceptionHandler exceptionHandler;
+
+		private int port = 4567;
 
 		public Builder setExceptionHandler(CiconiaExceptionHandler exceptionHandler) {
 			this.exceptionHandler = exceptionHandler;
@@ -27,6 +37,11 @@ public class CiconiaSparkConfiguration extends CiconiaConfiguration {
 		@Override
 		public Builder setPathSeparator(char pathSeparator) {
 			throw new UnsupportedOperationException("Path separator cannot be changed");
+		}
+
+		public Builder setPort(int port) {
+			this.port = port;
+			return this;
 		}
 
 		@Override
