@@ -19,6 +19,9 @@ public class ObjectsDatabase {
 	}
 
 	public Optional<Object> findSuitableObject(Class<?> clazz){
+		Optional<Object> op = findObject(clazz);
+		if(op.isPresent())
+			return op;
 		return objectMap.values()
 				.stream()
 				.filter(entry -> clazz.isAssignableFrom(entry.getClass()))
