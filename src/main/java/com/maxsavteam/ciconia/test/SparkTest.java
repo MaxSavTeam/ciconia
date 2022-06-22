@@ -5,6 +5,8 @@ import com.maxsavteam.ciconia.annotation.Mapping;
 import com.maxsavteam.ciconia.annotation.PathVariable;
 import com.maxsavteam.ciconia.sparkjava.CiconiaSparkApplication;
 import com.maxsavteam.ciconia.sparkjava.CiconiaSparkConfiguration;
+import spark.Request;
+import spark.Response;
 
 @Mapping
 @Component
@@ -23,11 +25,14 @@ public class SparkTest {
 	}
 
 	@Mapping("hello-{name}")
-	public String hello(
+	public void hello(
 			@PathVariable("name") String name,
-			TestComponent testComponent
+			TestComponent testComponent,
+			Response response
 	){
-		return testComponent.test(name);
+		response.type("text/plain");
+		response.body(testComponent.test(name));
+		response.status(200);
 	}
 
 }

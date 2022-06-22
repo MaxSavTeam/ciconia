@@ -3,6 +3,7 @@ package com.maxsavteam.ciconia.sparkjava;
 import com.maxsavteam.ciconia.CiconiaApplication;
 import com.maxsavteam.ciconia.CiconiaHandler;
 import com.maxsavteam.ciconia.annotation.RequestMethod;
+import com.maxsavteam.ciconia.component.ObjectsDatabase;
 import com.maxsavteam.ciconia.exception.CiconiaRuntimeException;
 import org.json.JSONObject;
 import spark.Request;
@@ -41,11 +42,20 @@ public class CiconiaSparkApplication {
 			params.put(attribute, request.queryParams(attribute));
 		jsonObject.put("params", params);
 
+		ObjectsDatabase database = new ObjectsDatabase();
+		database.addObject(request);
+		database.addObject(response);
+
 		Object result = CiconiaHandler.getInstance().handle(
 				jsonObject,
-				requestMethod
+				requestMethod,
+				database
 		);
-		return result.toString();
+		if(result == null)
+			return null;
+		if(result == CiconiaHandler.ASYNC_METHOD || result == CiconiaHandler.VOID)
+			return null;
+		return result;
 	}
 
 }
