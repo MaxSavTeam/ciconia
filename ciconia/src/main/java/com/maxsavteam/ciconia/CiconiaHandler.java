@@ -116,7 +116,7 @@ public class CiconiaHandler {
 			} else {
 				Optional<Object> op = objectsDatabase.findObject(argument.getArgumentType());
 				methodArguments[i] = op
-						.or(()->contextualDatabase.findObject(argument.getArgumentType()))
+						.or(()->contextualDatabase.findSuitableObject(argument.getArgumentType()))
 						.orElse(null);
 			}
 		}

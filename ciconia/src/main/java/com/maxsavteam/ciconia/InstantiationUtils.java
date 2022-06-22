@@ -1,7 +1,5 @@
 package com.maxsavteam.ciconia;
 
-import com.maxsavteam.ciconia.annotation.Component;
-import com.maxsavteam.ciconia.component.ComponentsDatabase;
 import com.maxsavteam.ciconia.component.ObjectsDatabase;
 import com.maxsavteam.ciconia.exception.InstantiationException;
 

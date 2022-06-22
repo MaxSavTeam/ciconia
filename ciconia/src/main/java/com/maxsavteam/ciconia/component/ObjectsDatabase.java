@@ -18,4 +18,11 @@ public class ObjectsDatabase {
 		return Optional.empty();
 	}
 
+	public Optional<Object> findSuitableObject(Class<?> clazz){
+		return objectMap.values()
+				.stream()
+				.filter(entry -> clazz.isAssignableFrom(entry.getClass()))
+				.findFirst();
+	}
+
 }
