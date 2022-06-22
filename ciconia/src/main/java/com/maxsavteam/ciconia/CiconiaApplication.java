@@ -8,7 +8,6 @@ import com.maxsavteam.ciconia.graph.ComponentsDependenciesGraph;
 import com.maxsavteam.ciconia.tree.Tree;
 import com.maxsavteam.ciconia.tree.TreeBuilder;
 import com.maxsavteam.ciconia.component.Component;
-import com.maxsavteam.ciconia.component.ComponentsDatabase;
 import com.maxsavteam.ciconia.component.Controller;
 import com.maxsavteam.ciconia.component.ExecutableMethod;
 import com.maxsavteam.ciconia.exception.InstantiationException;
