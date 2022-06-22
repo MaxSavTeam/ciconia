@@ -25,14 +25,11 @@ public class SparkTest {
 	}
 
 	@Mapping("hello-{name}")
-	public void hello(
+	public String hello(
 			@PathVariable("name") String name,
-			TestComponent testComponent,
-			Response response
+			TestComponent testComponent
 	){
-		response.type("text/plain");
-		response.body(testComponent.test(name));
-		response.status(200);
+		return testComponent.test(name);
 	}
 
 }
