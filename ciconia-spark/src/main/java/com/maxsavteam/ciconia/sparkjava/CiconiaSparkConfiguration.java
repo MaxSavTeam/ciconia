@@ -2,6 +2,7 @@ package com.maxsavteam.ciconia.sparkjava;
 
 import com.maxsavteam.ciconia.CiconiaConfiguration;
 import com.maxsavteam.ciconia.annotation.handler.ParameterAnnotationHandler;
+import com.maxsavteam.ciconia.sparkjava.annotation.handler.CookieHandler;
 import com.maxsavteam.ciconia.sparkjava.annotation.handler.HeaderHandler;
 import spark.Spark;
 
@@ -56,6 +57,7 @@ public class CiconiaSparkConfiguration extends CiconiaConfiguration {
 		public CiconiaSparkConfiguration build() {
 			pathSeparator = '/';
 			addParameterAnnotationHandler(new HeaderHandler());
+			addParameterAnnotationHandler(new CookieHandler());
 			return new CiconiaSparkConfiguration(this);
 		}
 	}
