@@ -5,8 +5,6 @@ import com.maxsavteam.ciconia.annotation.Mapping;
 import com.maxsavteam.ciconia.annotation.PathVariable;
 import com.maxsavteam.ciconia.sparkjava.CiconiaSparkApplication;
 import com.maxsavteam.ciconia.sparkjava.CiconiaSparkConfiguration;
-import spark.Request;
-import spark.Response;
 
 @Mapping
 @Component
