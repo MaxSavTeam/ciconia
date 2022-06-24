@@ -12,20 +12,23 @@ public class ObjectsDatabase {
 		objectMap.put(object.getClass().getName(), object);
 	}
 
-	public Optional<Object> findObject(Class<?> clazz){
+	@SuppressWarnings("unchecked")
+	public <T> Optional<T> findObject(Class<T> clazz){
 		if(objectMap.containsKey(clazz.getName()))
-			return Optional.of(objectMap.get(clazz.getName()));
+			return (Optional<T>) Optional.of(objectMap.get(clazz.getName()));
 		return Optional.empty();
 	}
 
-	public Optional<Object> findSuitableObject(Class<?> clazz){
-		Optional<Object> op = findObject(clazz);
+	public <T> Optional<T> findSuitableObject(Class<T> clazz){
+		Optional<T> op = findObject(clazz);
 		if(op.isPresent())
 			return op;
-		return objectMap.values()
+		@SuppressWarnings("unchecked")
+		Optional<T> t = (Optional<T>) objectMap.values()
 				.stream()
 				.filter(entry -> clazz.isAssignableFrom(entry.getClass()))
 				.findFirst();
+		return t;
 	}
 
 	public static ObjectsDatabase immutable(ObjectsDatabase database){
@@ -45,11 +48,11 @@ public class ObjectsDatabase {
 			throw new UnsupportedOperationException();
 		}
 
-		public Optional<Object> findObject(Class<?> clazz){
+		public <T> Optional<T> findObject(Class<T> clazz){
 			return objectsDatabase.findObject(clazz);
 		}
 
-		public Optional<Object> findSuitableObject(Class<?> clazz){
+		public <T> Optional<T> findSuitableObject(Class<T> clazz){
 			return objectsDatabase.findSuitableObject(clazz);
 		}
 
