@@ -1,24 +1,23 @@
 package com.maxsavteam.ciconia;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.maxsavteam.ciconia.annotation.Param;
 import com.maxsavteam.ciconia.annotation.RequestMethod;
-import com.maxsavteam.ciconia.annotation.ValueConstants;
+import com.maxsavteam.ciconia.annotation.handler.Context;
+import com.maxsavteam.ciconia.annotation.handler.ParamHandler;
+import com.maxsavteam.ciconia.annotation.handler.ParameterAnnotationHandler;
+import com.maxsavteam.ciconia.annotation.handler.PathVariableHandler;
 import com.maxsavteam.ciconia.component.Controller;
 import com.maxsavteam.ciconia.component.ExecutableMethod;
 import com.maxsavteam.ciconia.component.ObjectsDatabase;
 import com.maxsavteam.ciconia.exception.ExecutionException;
-import com.maxsavteam.ciconia.exception.IncompatibleClassException;
 import com.maxsavteam.ciconia.exception.MethodNotFoundException;
-import com.maxsavteam.ciconia.exception.ParameterNotPresentException;
 import com.maxsavteam.ciconia.tree.Tree;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,14 +33,23 @@ public class CiconiaHandler {
 		return instance;
 	}
 
+	private static final List<ParameterAnnotationHandler> defaultHandlers = List.of(
+			new ParamHandler(),
+			new PathVariableHandler()
+	);
+
 	private final Tree tree;
 	private final ObjectsDatabase objectsDatabase;
 	private final CiconiaConfiguration configuration;
+
+	private final List<ParameterAnnotationHandler> handlers = new ArrayList<>();
 
 	private CiconiaHandler(Tree tree, ObjectsDatabase db, CiconiaConfiguration configuration) {
 		this.tree = tree;
 		this.objectsDatabase = db;
 		this.configuration = configuration;
+		handlers.addAll(defaultHandlers);
+		handlers.addAll(configuration.getParameterAnnotationHandlers());
 	}
 
 	static void initialize(Tree tree, ObjectsDatabase objectsDatabase, CiconiaConfiguration configuration) {
@@ -80,40 +88,39 @@ public class CiconiaHandler {
 		}
 	}
 
-	private Object processMethod(MethodExecutionContext context) throws InvocationTargetException, IllegalAccessException {
-		ExecutableMethod method = context.getExecutableMethod();
-		Controller controller = context.getController();
-		JSONObject params = context.getParams();
-		Map<String, String> pathVariablesMap = context.getPathVariablesMap();
-		ObjectsDatabase contextualDatabase = context.getContextualDatabase();
+	private Object processMethod(MethodExecutionContext executionContext) throws InvocationTargetException, IllegalAccessException {
+		ExecutableMethod method = executionContext.getExecutableMethod();
+		Controller controller = executionContext.getController();
+		JSONObject params = executionContext.getParams();
+		Map<String, String> pathVariablesMap = executionContext.getPathVariablesMap();
+		ObjectsDatabase contextualDatabase = executionContext.getContextualDatabase();
+
+		Context context = new Context()
+				.setComponentsDatabase(ObjectsDatabase.immutable(objectsDatabase))
+				.setContextualObjectsDatabase(ObjectsDatabase.immutable(contextualDatabase))
+				.setParameters(Collections.unmodifiableMap(params.toMap()))
+				.setPathVariables(Collections.unmodifiableMap(pathVariablesMap))
+				.setMethodPath(controller.getComponentClass().getName() + "#" + method.getMethod().getName())
+				.setMethodMapping(controller.getMappingName() + configuration.getPathSeparator() + method.getMappingWrapper().getMappingName());
 
 		List<ExecutableMethod.Argument> arguments = method.getArguments();
 		Object[] methodArguments = new Object[arguments.size()];
 		for (int i = 0; i < arguments.size(); i++) {
 			ExecutableMethod.Argument argument = arguments.get(i);
-			if (argument.isParameterized()) {
-				Param param = argument.getParam();
-				Object paramObject = params == null ? null : params.opt(param.value());
-				if (paramObject == null) {
-					if (param.required()) {
-						throw new ParameterNotPresentException(
-								String.format(
-										"Parameter \"%s\" is not present, but required for method \"%s\" (%s)",
-										param.value(),
-										controller.getMappingName() + configuration.getPathSeparator() + method.getMappingWrapper().getMappingName(),
-										controller.getComponentClass().getName() + "#" + method.getMethod().getName()
-								)
-						);
-					} else {
-						paramObject = ValueConstants.DEFAULT_NONE.equals(param.defaultValue()) ? null : param.defaultValue();
-					}
+			List<Annotation> annotations = argument.getAnnotations();
+			boolean found = false;
+			for(Annotation annotation : annotations){
+				ParameterAnnotationHandler handler = getHandler(annotation);
+				if(handler == null)
+					continue;
+				Optional<Object> op = handler.handle(annotation, argument.getArgumentType(), context);
+				if(op.isPresent()){
+					found = true;
+					methodArguments[i] = op.get();
+					break;
 				}
-				methodArguments[i] = convertToParameterType(argument.getArgumentType(), paramObject, param.value());
-			}else if(argument.isPathVariable()){
-				String variableName = argument.getPathVariable().value();
-				String variableValue = pathVariablesMap.get(variableName);
-				methodArguments[i] = convertToParameterType(argument.getArgumentType(), variableValue, variableName);
-			} else {
+			}
+			if(!found) {
 				Optional<Object> op = objectsDatabase.findObject(argument.getArgumentType());
 				methodArguments[i] = op
 						.or(()->contextualDatabase.findSuitableObject(argument.getArgumentType()))
@@ -127,40 +134,12 @@ public class CiconiaHandler {
 		return result;
 	}
 
-	private Object convertToParameterType(Class<?> cl, Object param, String paramName){
-		if(param == null)
-			return null;
-		if(cl.isAssignableFrom(param.getClass()))
-			return param;
-		if(param instanceof JSONObject){
-			try {
-				return new ObjectMapper().readValue(param.toString(), cl);
-			} catch (JsonProcessingException e) {
-				throw new IncompatibleClassException(e);
-			}
+	private ParameterAnnotationHandler getHandler(Annotation annotation){
+		for(ParameterAnnotationHandler handler : handlers){
+			if(handler.supports(annotation.annotationType()))
+				return handler;
 		}
-		if(cl.isAssignableFrom(List.class) && param instanceof JSONArray){
-			List<Object> list = new ArrayList<>();
-			JSONArray jsonArray = (JSONArray) param;
-			for(int i = 0; i < jsonArray.length(); i++){
-				list.add(jsonArray.get(i));
-			}
-			return list;
-		}
-
-		if(param instanceof String){
-			Object result = StringConverter.tryToConvert((String) param, cl);
-			if(result != null)
-				return result;
-		}
-
-		throw new IncompatibleClassException(
-				String.format(
-						"Parameter \"%s\" cannot be converted to declared type %s",
-						paramName,
-						cl.getName()
-				)
-		);
+		return null;
 	}
 
 	private static class MethodExecutionContext {

@@ -1,6 +1,7 @@
 package com.maxsavteam.ciconia.sparkjava;
 
 import com.maxsavteam.ciconia.CiconiaConfiguration;
+import com.maxsavteam.ciconia.annotation.handler.ParameterAnnotationHandler;
 import spark.Spark;
 
 public class CiconiaSparkConfiguration extends CiconiaConfiguration {
@@ -41,6 +42,12 @@ public class CiconiaSparkConfiguration extends CiconiaConfiguration {
 
 		public Builder setPort(int port) {
 			this.port = port;
+			return this;
+		}
+
+		@Override
+		public Builder addParameterAnnotationHandler(ParameterAnnotationHandler handler) {
+			super.addParameterAnnotationHandler(handler);
 			return this;
 		}
 

@@ -28,4 +28,31 @@ public class ObjectsDatabase {
 				.findFirst();
 	}
 
+	public static ObjectsDatabase immutable(ObjectsDatabase database){
+		return new UnmodifiedObjectsDatabase(database);
+	}
+
+	private static class UnmodifiedObjectsDatabase extends ObjectsDatabase {
+
+		private final ObjectsDatabase objectsDatabase;
+
+		public UnmodifiedObjectsDatabase(ObjectsDatabase objectsDatabase) {
+			this.objectsDatabase = objectsDatabase;
+		}
+
+		@Override
+		public void addObject(Object object) {
+			throw new UnsupportedOperationException();
+		}
+
+		public Optional<Object> findObject(Class<?> clazz){
+			return objectsDatabase.findObject(clazz);
+		}
+
+		public Optional<Object> findSuitableObject(Class<?> clazz){
+			return objectsDatabase.findSuitableObject(clazz);
+		}
+
+	}
+
 }

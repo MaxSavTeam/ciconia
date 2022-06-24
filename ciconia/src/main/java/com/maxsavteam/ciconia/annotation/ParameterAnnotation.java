@@ -5,15 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@ParameterAnnotation
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.PARAMETER)
-public @interface Param {
-
-	String value();
-
-	boolean required() default true;
-
-	String defaultValue() default ValueConstants.DEFAULT_NONE;
-
+@Target(ElementType.ANNOTATION_TYPE)
+public @interface ParameterAnnotation {
 }

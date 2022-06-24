@@ -3,6 +3,7 @@ package com.maxsavteam.ciconia;
 import com.maxsavteam.ciconia.annotation.Component;
 import com.maxsavteam.ciconia.annotation.Mapping;
 import com.maxsavteam.ciconia.annotation.Param;
+import com.maxsavteam.ciconia.annotation.ParameterAnnotation;
 import com.maxsavteam.ciconia.annotation.PathVariable;
 import com.maxsavteam.ciconia.component.Controller;
 import com.maxsavteam.ciconia.component.ExecutableMethod;
@@ -74,10 +75,15 @@ class Parser {
 		ArrayList<ExecutableMethod.Argument> arguments = new ArrayList<>();
 		for(int i = 0; i < parameterTypes.length; i++){
 			Annotation[] annotations = parameterAnnotations[i];
-			Param paramAnnotation = findAnnotation(annotations, Param.class);
-			PathVariable pathVariableAnnotation = findAnnotation(annotations, PathVariable.class);
+
+			List<Annotation> parameterAnnotationsList = new ArrayList<>();
+			for(Annotation annotation : annotations){
+				if(annotation.annotationType().isAnnotationPresent(ParameterAnnotation.class))
+					parameterAnnotationsList.add(annotation);
+			}
+
 			Class<?> parameterType = parameterTypes[i];
-			ExecutableMethod.Argument argument = new ExecutableMethod.Argument(parameterType, paramAnnotation, pathVariableAnnotation);
+			ExecutableMethod.Argument argument = new ExecutableMethod.Argument(parameterType, parameterAnnotationsList);
 			arguments.add(argument);
 		}
 

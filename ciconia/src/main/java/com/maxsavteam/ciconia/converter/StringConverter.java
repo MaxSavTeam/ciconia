@@ -1,4 +1,4 @@
-package com.maxsavteam.ciconia;
+package com.maxsavteam.ciconia.converter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
