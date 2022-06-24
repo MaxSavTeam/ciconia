@@ -116,7 +116,11 @@ public class CiconiaHandler {
 				Optional<Object> op = handler.handle(annotation, argument.getArgumentType(), context);
 				if(op.isPresent()){
 					found = true;
-					methodArguments[i] = op.get();
+					Object obj = op.get();
+					if(obj == ParameterAnnotationHandler.NULL_VALUE)
+						methodArguments[i] = null;
+					else
+						methodArguments[i] = op.get();
 					break;
 				}
 			}
