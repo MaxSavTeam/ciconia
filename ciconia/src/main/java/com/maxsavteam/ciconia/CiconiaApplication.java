@@ -53,8 +53,8 @@ public class CiconiaApplication {
 
 		InstantiationUtils.instantiateComponents(topologicalOrder, objectsDatabase);
 
-		Tree tree = TreeBuilder.build(configuration, controllers);
-		CiconiaHandler.initialize(tree, objectsDatabase, configuration);
+		MappingsContainer container = new MappingsContainer(controllers, configuration);
+		CiconiaHandler.initialize(container, objectsDatabase, configuration);
 	}
 
 	private String getPrettyCycle(List<Component> cycle){
@@ -79,7 +79,7 @@ public class CiconiaApplication {
 			for(ExecutableMethod method : controller.getExecutableMethods()){
 				String methodName = controller.getComponentClass().getName() + "#" + method.getMethod().getName();
 				String originalMapping = controller.getMappingName() + configuration.getPathSeparator() + method.getMappingWrapper().getMappingName();
-				String mapping = originalMapping.replaceAll("\\{\\w+}", ValueConstants.DEFAULT_NONE);
+				String mapping = originalMapping.replaceAll("\\{\\w+}", "*");
 
 				ArrayList<Pair<RequestMethod, String>> mapRequestMethods = map.getOrDefault(mapping, new ArrayList<>());
 				if(mapRequestMethods.isEmpty())

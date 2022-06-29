@@ -10,7 +10,6 @@ import com.maxsavteam.ciconia.component.ExecutableMethod;
 import com.maxsavteam.ciconia.component.ObjectsDatabase;
 import com.maxsavteam.ciconia.exception.ExecutionException;
 import com.maxsavteam.ciconia.exception.MethodNotFoundException;
-import com.maxsavteam.ciconia.tree.Tree;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
@@ -38,22 +37,22 @@ public class CiconiaHandler {
 			new PathVariableHandler()
 	);
 
-	private final Tree tree;
+	private final MappingsContainer mappingsContainer;
 	private final ObjectsDatabase objectsDatabase;
 	private final CiconiaConfiguration configuration;
 
 	private final List<ParameterAnnotationHandler> handlers = new ArrayList<>();
 
-	private CiconiaHandler(Tree tree, ObjectsDatabase db, CiconiaConfiguration configuration) {
-		this.tree = tree;
+	private CiconiaHandler(MappingsContainer mappingsContainer, ObjectsDatabase db, CiconiaConfiguration configuration) {
+		this.mappingsContainer = mappingsContainer;
 		this.objectsDatabase = db;
 		this.configuration = configuration;
 		handlers.addAll(defaultHandlers);
 		handlers.addAll(configuration.getParameterAnnotationHandlers());
 	}
 
-	static void initialize(Tree tree, ObjectsDatabase objectsDatabase, CiconiaConfiguration configuration) {
-		instance = new CiconiaHandler(tree, objectsDatabase, configuration);
+	static void initialize(MappingsContainer mappingsContainer, ObjectsDatabase objectsDatabase, CiconiaConfiguration configuration) {
+		instance = new CiconiaHandler(mappingsContainer, objectsDatabase, configuration);
 	}
 
 	public Object handle(JSONObject jsonObject, RequestMethod requestMethod){
@@ -66,10 +65,9 @@ public class CiconiaHandler {
 		if(methodName.startsWith(String.valueOf(configuration.getPathSeparator())))
 			methodName = methodName.substring(1);
 
-		Optional<Tree.MethodSearchResult> op = tree.findMethod(methodName, requestMethod);
-		if (op.isEmpty())
+		MappingsContainer.MethodSearchResult result = mappingsContainer.findMethod(methodName, requestMethod);
+		if (result == null)
 			throw new MethodNotFoundException(methodName + " (" + requestMethod + ")");
-		Tree.MethodSearchResult result = op.get();
 		Controller controller = result.getController();
 		ExecutableMethod executableMethod = result.getMethod();
 		Map<String, String> pathVariablesMap = result.getPathVariablesMap();

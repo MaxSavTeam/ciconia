@@ -1,5 +1,6 @@
 package com.maxsavteam.ciconia.component;
 
+import com.maxsavteam.ciconia.CiconiaConfiguration;
 import com.maxsavteam.ciconia.annotation.RequestMethod;
 import com.maxsavteam.ciconia.exception.InvalidPathVariableException;
 
@@ -15,16 +16,19 @@ public class MappingWrapper {
 	private static final Pattern VARIABLE_NAME_PATTERN = Pattern.compile("^[a-zA-Z_]+$");
 
 	private final String mappingName;
-	
+
 	private final List<RequestMethod> requestMethods;
 
 	private final List<String> pathVariables;
 
 	private final Pattern pattern;
 
-	public MappingWrapper(String mappingName, List<RequestMethod> requestMethods) {
+	private final CiconiaConfiguration configuration;
+
+	public MappingWrapper(String mappingName, List<RequestMethod> requestMethods, CiconiaConfiguration configuration) {
 		this.mappingName = mappingName;
 		this.requestMethods = requestMethods;
+		this.configuration = configuration;
 		pathVariables = resolvePathVariables();
 		pattern = createRegexPattern();
 	}
@@ -68,7 +72,37 @@ public class MappingWrapper {
 		boolean escapeIntervalStarted = false;
 		for (int i = 0; i < mappingName.length(); i++) {
 			char c = mappingName.charAt(i);
-			if (c == '{') {
+			if (c == '*') {
+				if (escapeIntervalStarted) {
+					sb.append("\\E");
+					escapeIntervalStarted = false;
+				}
+				String pattern;
+				if (i == mappingName.length() - 1 || mappingName.charAt(i + 1) != '*') {
+					pattern = String.format("([^%c]*)", configuration.getPathSeparator());
+				} else {
+					pattern = ".*";
+					// make last path separator unnecessary
+					// pattern 'test/**/test' should match 'test/test' and 'test/bla/test'
+					// but 'test/**' should not match 'test/'
+					if(i > 0 && mappingName.charAt(i - 1) == configuration.getPathSeparator()
+						&& !(i == mappingName.length() - 2 && mappingName.endsWith("**"))
+					) {
+						if(sb.length() >= 2 && sb.substring(sb.length() - 2).equals("\\E")) // if the last two characters are \E
+							sb.deleteCharAt(sb.length() - 3); // we know that before \E there is path separator so remove it
+						else
+							sb.deleteCharAt(sb.length() - 1);
+						sb.append(String.format("(\\Q%c\\E)?", configuration.getPathSeparator()));
+					}
+				}
+				sb.append(pattern);
+			} else if (c == '?') {
+				if (escapeIntervalStarted) {
+					sb.append("\\E");
+					escapeIntervalStarted = false;
+				}
+				sb.append(String.format("[^%c]", configuration.getPathSeparator()));
+			} else if (c == '{') {
 				if (escapeIntervalStarted) {
 					sb.append("\\E");
 					escapeIntervalStarted = false;
@@ -89,7 +123,7 @@ public class MappingWrapper {
 			sb.append("\\E");
 		}
 
-		return Pattern.compile("^" + sb + "$");
+		return Pattern.compile(sb.toString());
 	}
 
 	public String getMappingName() {
@@ -102,6 +136,10 @@ public class MappingWrapper {
 
 	public List<RequestMethod> getRequestMethods() {
 		return requestMethods;
+	}
+
+	public Pattern getPattern() {
+		return pattern;
 	}
 
 	public boolean containsRequestMethod(RequestMethod requestMethod) {

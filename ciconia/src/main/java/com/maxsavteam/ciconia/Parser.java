@@ -91,7 +91,7 @@ class Parser {
 		if(mappingName.startsWith(String.valueOf(configuration.getPathSeparator())))
 			mappingName = mappingName.substring(1);
 
-		MappingWrapper mappingWrapper = new MappingWrapper(mappingName, List.of(mapping.method()));
+		MappingWrapper mappingWrapper = new MappingWrapper(mappingName, List.of(mapping.method()), configuration);
 		return Optional.of(new ExecutableMethod(method, mappingWrapper, arguments));
 	}
 
