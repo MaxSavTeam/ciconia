@@ -9,7 +9,7 @@ import spark.Request;
 import java.lang.annotation.Annotation;
 import java.util.Optional;
 
-public class HeaderHandler extends BaseRequestHandler implements ParameterAnnotationHandler {
+public class HeaderHandler implements ParameterAnnotationHandler {
 
 	@Override
 	public boolean supports(Class<? extends Annotation> annotationClass) {
@@ -20,7 +20,7 @@ public class HeaderHandler extends BaseRequestHandler implements ParameterAnnota
 	public Optional<Object> handle(Annotation annotation, Class<?> parameterType, Context context) {
 		Header header = (Header) annotation;
 		String headerName = header.value();
-		Request request = getRequest(context.getContextualObjectsDatabase());
+		Request request = Utils.getRequest(context.getContextualObjectsDatabase());
 		String headerValue = request.headers(headerName);
 		if(headerValue == null)
 			return Optional.of(NULL_VALUE);

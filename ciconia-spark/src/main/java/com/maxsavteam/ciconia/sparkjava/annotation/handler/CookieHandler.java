@@ -8,7 +8,7 @@ import spark.Request;
 import java.lang.annotation.Annotation;
 import java.util.Optional;
 
-public class CookieHandler extends BaseRequestHandler implements ParameterAnnotationHandler {
+public class CookieHandler implements ParameterAnnotationHandler {
 
 	@Override
 	public boolean supports(Class<? extends Annotation> annotationClass) {
@@ -18,7 +18,7 @@ public class CookieHandler extends BaseRequestHandler implements ParameterAnnota
 	@Override
 	public Optional<Object> handle(Annotation annotation, Class<?> parameterType, Context context) {
 		Cookie cookie = (Cookie) annotation;
-		Request request = getRequest(context.getContextualObjectsDatabase());
+		Request request = Utils.getRequest(context.getContextualObjectsDatabase());
 		String cookieName = cookie.value();
 		String cookieValue = request.cookie(cookieName);
 		if(cookieValue == null)

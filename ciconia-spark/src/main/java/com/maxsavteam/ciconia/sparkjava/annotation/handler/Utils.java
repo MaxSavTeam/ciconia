@@ -5,9 +5,11 @@ import spark.Request;
 
 import java.util.Optional;
 
-public class BaseRequestHandler {
+class Utils {
 
-	protected Request getRequest(ObjectsDatabase contextualDatabase){
+	private Utils(){}
+
+	public static Request getRequest(ObjectsDatabase contextualDatabase){
 		Optional<Request> op = contextualDatabase.findSuitableObject(Request.class);
 		if(op.isEmpty())
 			throw new IllegalStateException("No request found in context");
