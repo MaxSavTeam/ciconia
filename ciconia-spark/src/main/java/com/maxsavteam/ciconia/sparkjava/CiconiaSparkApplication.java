@@ -56,7 +56,7 @@ public class CiconiaSparkApplication {
 		if(result == null)
 			return null;
 		if(result == CiconiaHandler.ASYNC_METHOD || result == CiconiaHandler.VOID)
-			return "";
+			return response.body();
 		return result;
 	}
 
