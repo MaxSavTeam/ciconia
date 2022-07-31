@@ -7,6 +7,7 @@ import com.maxsavteam.ciconia.component.Configurer;
 import com.maxsavteam.ciconia.component.Controller;
 import com.maxsavteam.ciconia.component.ExecutableMethod;
 import com.maxsavteam.ciconia.component.InstantiatableObject;
+import com.maxsavteam.ciconia.component.ObjectFactoryMethod;
 import com.maxsavteam.ciconia.component.ObjectsDatabase;
 import com.maxsavteam.ciconia.exception.DuplicateMappingException;
 import com.maxsavteam.ciconia.exception.InstantiationException;
@@ -112,9 +113,24 @@ public class CiconiaApplication {
 		StringBuilder sb = new StringBuilder();
 		sb.append("┌─────┐\n");
 		for (int i = 0; i < cycle.size(); i++) {
-			Class<?> cl = cycle.get(i).getaClass();
-			sb.append("|  ").append(cl.getSimpleName())
-					.append(" (").append(cl.getName()).append(")")
+			String name;
+			InstantiatableObject object = cycle.get(i);
+			if(object instanceof ObjectFactoryMethod){
+				ObjectFactoryMethod method = (ObjectFactoryMethod) object;
+				name = String.format(
+						"Object factory method %s in %s",
+						method.getMethod().getName(),
+						method.getMethod().getDeclaringClass().getName()
+				);
+			} else{
+				Class<?> cl = object.getaClass();
+				name = String.format(
+						"Component %s (%s)",
+						cl.getName(),
+						cl.getSimpleName()
+				);
+			}
+			sb.append("|  ").append(name)
 					.append("\n");
 			if (i != cycle.size() - 1) {
 				sb.append(String.format("↑     ↓%n"));
