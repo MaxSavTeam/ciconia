@@ -1,10 +1,6 @@
 package com.maxsavteam.ciconia.component;
 
-import com.maxsavteam.ciconia.annotation.RequestMethod;
-
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 public class Controller extends Component {
 	private final String mappingName;
@@ -22,14 +18,6 @@ public class Controller extends Component {
 
 	public List<ExecutableMethod> getExecutableMethods() {
 		return executableMethods;
-	}
-
-	public Optional<ExecutableMethod> findMethodByMapping(String mappingName, RequestMethod requestMethod){
-		return executableMethods
-				.stream()
-				.filter(method -> method.getMappingWrapper().containsRequestMethod(requestMethod))
-				.filter(method -> method.getMappingWrapper().matches(mappingName))
-				.findFirst();
 	}
 
 }

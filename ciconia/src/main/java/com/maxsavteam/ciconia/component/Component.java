@@ -1,53 +1,25 @@
 package com.maxsavteam.ciconia.component;
 
-import com.maxsavteam.ciconia.exception.InstantiationException;
+import com.maxsavteam.ciconia.InstantiationUtils;
+import com.maxsavteam.ciconia.ObjectFactory;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
-public class Component {
+public class Component extends InstantiatableObject {
 
-	private final Class<?> componentClass;
-
-	private final ArrayList<Class<?>> dependenciesClasses = new ArrayList<>();
-
-	private Object classInstance;
-
-	public Component(Class<?> componentClass) {
-		this.componentClass = componentClass;
-
-		analyzeDependencies();
+	public Component(Class<?> aClass) {
+		super(aClass);
 	}
 
-	private void analyzeDependencies(){
+	@Override
+	protected void analyzeDependencies() {
 		Constructor<?> ctor = findPreferredConstructor();
-		for(Class<?> cl : ctor.getParameterTypes()){
-			if(cl.isAnnotationPresent(com.maxsavteam.ciconia.annotation.Component.class))
-				dependenciesClasses.add(cl);
-		}
+		dependenciesClasses.addAll(Arrays.asList(ctor.getParameterTypes()));
 	}
 
-	public Constructor<?> findPreferredConstructor(){
-		Constructor<?>[] constructors = componentClass.getConstructors();
-		if(constructors.length != 1)
-			throw new InstantiationException("There is no default public constructor for " + componentClass.getName());
-		return constructors[0];
-	}
-
-	public List<Class<?>> getDependenciesClasses() {
-		return dependenciesClasses;
-	}
-
-	public Class<?> getComponentClass() {
-		return componentClass;
-	}
-
-	public Object getClassInstance() {
-		return classInstance;
-	}
-
-	public void setClassInstance(Object classInstance) {
-		this.classInstance = classInstance;
+	@Override
+	public ObjectFactory getFactory() {
+		return database -> InstantiationUtils.instantiateAsComponent(this, database);
 	}
 }

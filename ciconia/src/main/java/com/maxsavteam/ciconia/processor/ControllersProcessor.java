@@ -1,53 +1,27 @@
-package com.maxsavteam.ciconia;
+package com.maxsavteam.ciconia.processor;
 
-import com.maxsavteam.ciconia.annotation.Component;
+import com.maxsavteam.ciconia.CiconiaConfiguration;
 import com.maxsavteam.ciconia.annotation.Mapping;
-import com.maxsavteam.ciconia.annotation.Param;
 import com.maxsavteam.ciconia.annotation.ParameterAnnotation;
-import com.maxsavteam.ciconia.annotation.PathVariable;
 import com.maxsavteam.ciconia.component.Controller;
 import com.maxsavteam.ciconia.component.ExecutableMethod;
 import com.maxsavteam.ciconia.component.MappingWrapper;
-import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-class Parser {
+public class ControllersProcessor {
 
-	private final Reflections reflections;
 	private final CiconiaConfiguration configuration;
 
-	public Parser(Class<?> primarySource, CiconiaConfiguration configuration) {
-		this.reflections = new Reflections(primarySource.getPackageName());
+	public ControllersProcessor(CiconiaConfiguration configuration) {
 		this.configuration = configuration;
 	}
 
-	public List<com.maxsavteam.ciconia.component.Component> parse(){
-		Set<Class<?>> set = reflections.get(Scanners.SubTypes.of(Scanners.TypesAnnotated.with(Component.class)).asClass());
-		ArrayList<com.maxsavteam.ciconia.component.Component> components = new ArrayList<>();
-		for(Class<?> cl : set){
-			components.add(processComponent(cl));
-		}
-		return components;
-	}
-
-	private com.maxsavteam.ciconia.component.Component processComponent(Class<?> cl){
-		com.maxsavteam.ciconia.component.Component component;
-		if(cl.isAnnotationPresent(Mapping.class)){
-			component = processControllerMapping(cl);
-		}else{
-			component = new com.maxsavteam.ciconia.component.Component(cl);
-		}
-		return component;
-	}
-
-	private Controller processControllerMapping(Class<?> cl){
+	public Controller processControllerClass(Class<?> cl){
 		Mapping annotation = cl.getAnnotation(Mapping.class);
 		requireValidMapping(annotation.value(), cl.getName(), configuration.getPathSeparator());
 		ArrayList<ExecutableMethod> methods = new ArrayList<>();
@@ -93,15 +67,6 @@ class Parser {
 
 		MappingWrapper mappingWrapper = new MappingWrapper(mappingName, List.of(mapping.method()), configuration);
 		return Optional.of(new ExecutableMethod(method, mappingWrapper, arguments));
-	}
-
-	@SuppressWarnings("unchecked")
-	private static <T extends Annotation> T findAnnotation(Annotation[] annotations, Class<T> annotationClass){
-		for(Annotation annotation : annotations){
-			if(annotationClass.isInstance(annotation))
-				return (T) annotation;
-		}
-		return null;
 	}
 
 	private static void requireValidMapping(String value, String entityName, char pathSeparator){

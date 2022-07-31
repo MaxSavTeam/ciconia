@@ -1,24 +1,27 @@
 package com.maxsavteam.ciconia;
 
+import com.maxsavteam.ciconia.component.InstantiatableObject;
 import com.maxsavteam.ciconia.component.ObjectsDatabase;
 import com.maxsavteam.ciconia.exception.InstantiationException;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
 
-class InstantiationUtils {
+public class InstantiationUtils {
 
 	private InstantiationUtils(){}
 
-	public static void instantiateComponents(List<com.maxsavteam.ciconia.component.Component> components, ObjectsDatabase objectsDatabase){
-		for(com.maxsavteam.ciconia.component.Component component : components) {
-			Constructor<?> ctor = component.findPreferredConstructor();
-			instantiate(component, ctor, objectsDatabase);
-			objectsDatabase.addObject(component.getClassInstance());
+	public static void instantiateComponents(List<InstantiatableObject> objects, ObjectsDatabase objectsDatabase){
+		ObjectsDatabase immutableDatabase = objectsDatabase.immutable();
+		for(InstantiatableObject object : objects) {
+			Object instance = object.create(immutableDatabase);
+			objectsDatabase.addObject(instance);
 		}
 	}
 
-	public static void instantiate(com.maxsavteam.ciconia.component.Component component, Constructor<?> ctor, ObjectsDatabase objectsDatabase){
+	public static Object instantiateAsComponent(InstantiatableObject object, ObjectsDatabase objectsDatabase){
+		Constructor<?> ctor = object.findPreferredConstructor();
+
 		Object[] args = new Object[ctor.getParameterCount()];
 		for(int i = 0; i < args.length; i++){
 			Class<?> parameter = ctor.getParameterTypes()[i];
@@ -33,7 +36,8 @@ class InstantiationUtils {
 			e.printStackTrace();
 			throw new InstantiationException(e);
 		}
-		component.setClassInstance(instance);
+		object.setClassInstance(instance);
+		return instance;
 	}
 
 }

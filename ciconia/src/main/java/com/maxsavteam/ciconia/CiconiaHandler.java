@@ -94,11 +94,11 @@ public class CiconiaHandler {
 		ObjectsDatabase contextualDatabase = executionContext.getContextualDatabase();
 
 		Context context = new Context()
-				.setComponentsDatabase(ObjectsDatabase.immutable(objectsDatabase))
-				.setContextualObjectsDatabase(ObjectsDatabase.immutable(contextualDatabase))
+				.setComponentsDatabase(objectsDatabase.immutable())
+				.setContextualObjectsDatabase(contextualDatabase.immutable())
 				.setParameters(Collections.unmodifiableMap(params.toMap()))
 				.setPathVariables(Collections.unmodifiableMap(pathVariablesMap))
-				.setMethodPath(controller.getComponentClass().getName() + "#" + method.getMethod().getName())
+				.setMethodPath(controller.getaClass().getName() + "#" + method.getMethod().getName())
 				.setMethodMapping(controller.getMappingName() + configuration.getPathSeparator() + method.getMappingWrapper().getMappingName());
 
 		List<ExecutableMethod.Argument> arguments = method.getArguments();

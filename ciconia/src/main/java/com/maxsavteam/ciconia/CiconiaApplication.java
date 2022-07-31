@@ -1,13 +1,16 @@
 package com.maxsavteam.ciconia;
 
 import com.maxsavteam.ciconia.annotation.RequestMethod;
+import com.maxsavteam.ciconia.component.InstantiatableObject;
 import com.maxsavteam.ciconia.component.ObjectsDatabase;
 import com.maxsavteam.ciconia.exception.DuplicateMappingException;
-import com.maxsavteam.ciconia.graph.ComponentsDependenciesGraph;
+import com.maxsavteam.ciconia.graph.ObjectsDependenciesGraph;
 import com.maxsavteam.ciconia.component.Component;
 import com.maxsavteam.ciconia.component.Controller;
 import com.maxsavteam.ciconia.component.ExecutableMethod;
 import com.maxsavteam.ciconia.exception.InstantiationException;
+import com.maxsavteam.ciconia.parser.ComponentsParser;
+import com.maxsavteam.ciconia.processor.ControllersProcessor;
 import com.maxsavteam.ciconia.utils.Pair;
 
 import java.util.ArrayList;
@@ -27,24 +30,32 @@ public class CiconiaApplication {
 		this.configuration = configuration;
 	}
 
-	private void run(){
-		List<Component> components = new Parser(primarySource, configuration).parse();
-		List<Controller> controllers = components
-				.stream()
-				.filter(Controller.class::isInstance)
-				.map(Controller.class::cast)
-				.collect(Collectors.toList());
+	private void run() {
+		List<Component> components = ComponentsParser.parseComponents(primarySource);
+
+		List<Controller> controllers = new ArrayList<>();
+		ControllersProcessor controllersProcessor = new ControllersProcessor(configuration);
+		for(int i = 0; i < components.size(); i++){
+			Controller controller = controllersProcessor.processControllerClass(components.get(i).getaClass());
+			components.set(i, controller);
+			controllers.add(controller);
+		}
 
 		requireNoDuplicateMappings(controllers);
 
-		ComponentsDependenciesGraph graph = new ComponentsDependenciesGraph(components);
-		List<Component> cycle = graph.findDependencyCycle();
-		if(!cycle.isEmpty()){
+		List<InstantiatableObject> instantiatableObjects = components
+				.stream()
+				.map(component -> (InstantiatableObject) component)
+				.collect(Collectors.toList());
+
+		ObjectsDependenciesGraph graph = new ObjectsDependenciesGraph(instantiatableObjects);
+		List<InstantiatableObject> cycle = graph.findDependencyCycle();
+		if (!cycle.isEmpty()) {
 			String cycleString = getPrettyCycle(cycle);
 			throw new InstantiationException("Dependency cycle found\n" + cycleString);
 		}
 
-		List<Component> topologicalOrder = graph.getInTopologicalOrder();
+		List<InstantiatableObject> topologicalOrder = graph.getInTopologicalOrder();
 
 		ObjectsDatabase objectsDatabase = new ObjectsDatabase();
 
@@ -54,15 +65,15 @@ public class CiconiaApplication {
 		CiconiaHandler.initialize(container, objectsDatabase, configuration);
 	}
 
-	private String getPrettyCycle(List<Component> cycle){
+	private String getPrettyCycle(List<InstantiatableObject> cycle) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("┌─────┐\n");
-		for(int i = 0; i < cycle.size(); i++){
-			Class<?> cl = cycle.get(i).getComponentClass();
+		for (int i = 0; i < cycle.size(); i++) {
+			Class<?> cl = cycle.get(i).getaClass();
 			sb.append("|  ").append(cl.getSimpleName())
 					.append(" (").append(cl.getName()).append(")")
 					.append("\n");
-			if(i != cycle.size() - 1){
+			if (i != cycle.size() - 1) {
 				sb.append(String.format("↑     ↓%n"));
 			}
 		}
@@ -70,24 +81,24 @@ public class CiconiaApplication {
 		return sb.toString();
 	}
 
-	private void requireNoDuplicateMappings(List<Controller> controllers){
+	private void requireNoDuplicateMappings(List<Controller> controllers) {
 		Map<String, ArrayList<Pair<RequestMethod, String>>> map = new HashMap<>();
-		for(Controller controller : controllers){
-			for(ExecutableMethod method : controller.getExecutableMethods()){
-				String methodName = controller.getComponentClass().getName() + "#" + method.getMethod().getName();
+		for (Controller controller : controllers) {
+			for (ExecutableMethod method : controller.getExecutableMethods()) {
+				String methodName = controller.getaClass().getName() + "#" + method.getMethod().getName();
 				String originalMapping = controller.getMappingName() + configuration.getPathSeparator() + method.getMappingWrapper().getMappingName();
 				String mapping = originalMapping.replaceAll("\\{\\w+}", "*");
 
 				ArrayList<Pair<RequestMethod, String>> mapRequestMethods = map.getOrDefault(mapping, new ArrayList<>());
-				if(mapRequestMethods.isEmpty())
+				if (mapRequestMethods.isEmpty())
 					map.put(mapping, mapRequestMethods);
 
-				for(RequestMethod requestMethod : method.getMappingWrapper().getRequestMethods()){
+				for (RequestMethod requestMethod : method.getMappingWrapper().getRequestMethods()) {
 					Optional<Pair<RequestMethod, String>> op = mapRequestMethods
 							.stream()
 							.filter(p -> p.getFirst().equals(requestMethod))
 							.findAny();
-					if(op.isPresent()){
+					if (op.isPresent()) {
 						throw new DuplicateMappingException(String.format(
 								"Duplicate mapping found.\n" +
 										"Mapping \"%s\" (%s) defined for\n" +
@@ -99,7 +110,7 @@ public class CiconiaApplication {
 								methodName,
 								op.get().getSecond()
 						));
-					}else{
+					} else {
 						mapRequestMethods.add(new Pair<>(requestMethod, methodName));
 					}
 				}
@@ -107,11 +118,11 @@ public class CiconiaApplication {
 		}
 	}
 
-	public static void run(Class<?> source){
+	public static void run(Class<?> source) {
 		run(source, new CiconiaConfiguration.Builder().build());
 	}
 
-	public static void run(Class<?> source, CiconiaConfiguration configuration){
+	public static void run(Class<?> source, CiconiaConfiguration configuration) {
 		new CiconiaApplication(source, configuration).run();
 	}
 

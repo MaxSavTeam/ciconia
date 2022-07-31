@@ -8,8 +8,8 @@ public class ObjectsDatabase {
 
 	private final Map<String, Object> objectMap = new HashMap<>();
 
-	public void addObject(Object object){
-		objectMap.put(object.getClass().getName(), object);
+	public void addObject(Object component){
+		objectMap.put(component.getClass().getName(), component);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -31,27 +31,29 @@ public class ObjectsDatabase {
 		return t;
 	}
 
-	public static ObjectsDatabase immutable(ObjectsDatabase database){
-		return new UnmodifiedObjectsDatabase(database);
+	public ObjectsDatabase immutable(){
+		return new ImmutableObjectsDatabase(this);
 	}
 
-	private static class UnmodifiedObjectsDatabase extends ObjectsDatabase {
+	private static class ImmutableObjectsDatabase extends ObjectsDatabase {
 
 		private final ObjectsDatabase objectsDatabase;
 
-		public UnmodifiedObjectsDatabase(ObjectsDatabase objectsDatabase) {
+		public ImmutableObjectsDatabase(ObjectsDatabase objectsDatabase) {
 			this.objectsDatabase = objectsDatabase;
 		}
 
 		@Override
-		public void addObject(Object object) {
+		public void addObject(Object component) {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
 		public <T> Optional<T> findObject(Class<T> clazz){
 			return objectsDatabase.findObject(clazz);
 		}
 
+		@Override
 		public <T> Optional<T> findSuitableObject(Class<T> clazz){
 			return objectsDatabase.findSuitableObject(clazz);
 		}

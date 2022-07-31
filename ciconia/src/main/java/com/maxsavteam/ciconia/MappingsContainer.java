@@ -33,7 +33,7 @@ class MappingsContainer {
 			else if(controllerMapping.isEmpty())
 				fullMappingRegex = method.getMappingWrapper().getPattern().pattern();
 			else if(methodMapping.isEmpty())
-				fullMappingRegex = controller.getMappingName();
+				fullMappingRegex = controller.getMappingName() + configuration.getPathSeparator();
 			else
 				fullMappingRegex = "\\Q" + controller.getMappingName() + "\\E"
 						+ "\\" + configuration.getPathSeparator()
