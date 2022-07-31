@@ -10,13 +10,9 @@ import java.util.Set;
 
 public class ComponentsParser {
 
-	public static List<Component> parseComponents(Class<?> source){
+	public static List<Class<?>> parseComponentsClasses(Class<?> source){
 		Set<Class<?>> set = new Reflections(source.getPackageName()).get(Scanners.SubTypes.of(Scanners.TypesAnnotated.with(com.maxsavteam.ciconia.annotation.Component.class)).asClass());
-		List<Component> components = new ArrayList<>();
-		for(Class<?> cl : set){
-			components.add(new Component(cl));
-		}
-		return components;
+		return new ArrayList<>(set);
 	}
 
 }

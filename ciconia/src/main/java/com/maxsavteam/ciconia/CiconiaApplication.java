@@ -1,11 +1,12 @@
 package com.maxsavteam.ciconia;
 
+import com.maxsavteam.ciconia.annotation.Mapping;
 import com.maxsavteam.ciconia.annotation.RequestMethod;
+import com.maxsavteam.ciconia.component.Component;
 import com.maxsavteam.ciconia.component.InstantiatableObject;
 import com.maxsavteam.ciconia.component.ObjectsDatabase;
 import com.maxsavteam.ciconia.exception.DuplicateMappingException;
 import com.maxsavteam.ciconia.graph.ObjectsDependenciesGraph;
-import com.maxsavteam.ciconia.component.Component;
 import com.maxsavteam.ciconia.component.Controller;
 import com.maxsavteam.ciconia.component.ExecutableMethod;
 import com.maxsavteam.ciconia.exception.InstantiationException;
@@ -31,14 +32,20 @@ public class CiconiaApplication {
 	}
 
 	private void run() {
-		List<Component> components = ComponentsParser.parseComponents(primarySource);
+		List<Class<?>> componentsClasses = ComponentsParser.parseComponentsClasses(primarySource);
 
+		List<Component> components = new ArrayList<>();
 		List<Controller> controllers = new ArrayList<>();
 		ControllersProcessor controllersProcessor = new ControllersProcessor(configuration);
-		for(int i = 0; i < components.size(); i++){
-			Controller controller = controllersProcessor.processControllerClass(components.get(i).getaClass());
-			components.set(i, controller);
-			controllers.add(controller);
+		for(Class<?> cl : componentsClasses){
+			Component component;
+			if(cl.isAnnotationPresent(Mapping.class)) {
+				component = controllersProcessor.processControllerClass(cl);
+				controllers.add((Controller) component);
+			} else {
+				component = new Component(cl);
+			}
+			components.add(component);
 		}
 
 		requireNoDuplicateMappings(controllers);
