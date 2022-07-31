@@ -47,7 +47,15 @@ public class CiconiaApplication {
 
 		List<Configurer> configurers = getConfigurers();
 		for(Configurer configurer : configurers){
-			instantiatableObjects.add(configurer);
+			boolean isThisClassAlreadyIncluded = false;
+			for(InstantiatableObject instantiatableObject : instantiatableObjects){
+				if(instantiatableObject.getaClass().equals(configurer.getaClass())){
+					isThisClassAlreadyIncluded = true;
+					break;
+				}
+			}
+			if(!isThisClassAlreadyIncluded)
+				instantiatableObjects.add(configurer);
 			instantiatableObjects.addAll(configurer.getMethods());
 		}
 
