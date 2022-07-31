@@ -1,26 +1,19 @@
 package com.maxsavteam.ciconia.component;
 
-import com.maxsavteam.ciconia.ObjectFactory;
+import com.maxsavteam.ciconia.InstantiatableObjectFactory;
 import com.maxsavteam.ciconia.exception.InstantiationException;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public abstract class InstantiatableObject implements Dependant, ObjectFactory {
+public abstract class InstantiatableObject implements Dependant, InstantiatableObjectFactory {
 
 	protected final Class<?> aClass;
-	protected final List<Class<?>> dependenciesClasses = new ArrayList<>();
 	private Object classInstance;
 
 	public InstantiatableObject(Class<?> aClass) {
 		this.aClass = aClass;
-
-		analyzeDependencies();
-	}
-
-	protected void analyzeDependencies(){
-
 	}
 
 	public Constructor<?> findPreferredConstructor(){
@@ -33,7 +26,7 @@ public abstract class InstantiatableObject implements Dependant, ObjectFactory {
 
 	@Override
 	public List<Class<?>> getDependenciesClasses() {
-		return dependenciesClasses;
+		return Collections.emptyList();
 	}
 
 	public Class<?> getaClass() {
@@ -49,12 +42,12 @@ public abstract class InstantiatableObject implements Dependant, ObjectFactory {
 	}
 
 	@Override
-	public Object create(ObjectsDatabase database) {
+	public Object create(ObjectsDatabase database) throws InstantiationException {
 		Object instance = getFactory().create(database);
 		setClassInstance(instance);
 		return instance;
 	}
 
-	public abstract ObjectFactory getFactory();
+	public abstract InstantiatableObjectFactory getFactory();
 
 }

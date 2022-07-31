@@ -8,8 +8,8 @@ import com.maxsavteam.ciconia.annotation.RequestMethod;
 @Component
 public class TestComponent {
 
-	public TestComponent(Main main){
-
+	public TestComponent(Main main, TestBean testBean){
+		System.out.println("Created with bean " + testBean);
 	}
 
 	public String test(String x){

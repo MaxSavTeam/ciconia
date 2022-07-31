@@ -1,6 +1,5 @@
 package com.maxsavteam.ciconia.parser;
 
-import com.maxsavteam.ciconia.component.Component;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 
@@ -10,7 +9,7 @@ import java.util.Set;
 
 public class ComponentsParser {
 
-	public static List<Class<?>> parseComponentsClasses(Class<?> source){
+	public static List<Class<?>> parse(Class<?> source){
 		Set<Class<?>> set = new Reflections(source.getPackageName()).get(Scanners.SubTypes.of(Scanners.TypesAnnotated.with(com.maxsavteam.ciconia.annotation.Component.class)).asClass());
 		return new ArrayList<>(set);
 	}

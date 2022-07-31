@@ -3,14 +3,17 @@ package com.maxsavteam.ciconia;
 import com.maxsavteam.ciconia.annotation.Mapping;
 import com.maxsavteam.ciconia.annotation.RequestMethod;
 import com.maxsavteam.ciconia.component.Component;
+import com.maxsavteam.ciconia.component.Configurer;
+import com.maxsavteam.ciconia.component.Controller;
+import com.maxsavteam.ciconia.component.ExecutableMethod;
 import com.maxsavteam.ciconia.component.InstantiatableObject;
 import com.maxsavteam.ciconia.component.ObjectsDatabase;
 import com.maxsavteam.ciconia.exception.DuplicateMappingException;
-import com.maxsavteam.ciconia.graph.ObjectsDependenciesGraph;
-import com.maxsavteam.ciconia.component.Controller;
-import com.maxsavteam.ciconia.component.ExecutableMethod;
 import com.maxsavteam.ciconia.exception.InstantiationException;
+import com.maxsavteam.ciconia.graph.ObjectsDependenciesGraph;
 import com.maxsavteam.ciconia.parser.ComponentsParser;
+import com.maxsavteam.ciconia.parser.ConfigurationsParser;
+import com.maxsavteam.ciconia.processor.ConfigurerProcessor;
 import com.maxsavteam.ciconia.processor.ControllersProcessor;
 import com.maxsavteam.ciconia.utils.Pair;
 
@@ -32,21 +35,8 @@ public class CiconiaApplication {
 	}
 
 	private void run() {
-		List<Class<?>> componentsClasses = ComponentsParser.parseComponentsClasses(primarySource);
-
-		List<Component> components = new ArrayList<>();
-		List<Controller> controllers = new ArrayList<>();
-		ControllersProcessor controllersProcessor = new ControllersProcessor(configuration);
-		for(Class<?> cl : componentsClasses){
-			Component component;
-			if(cl.isAnnotationPresent(Mapping.class)) {
-				component = controllersProcessor.processControllerClass(cl);
-				controllers.add((Controller) component);
-			} else {
-				component = new Component(cl);
-			}
-			components.add(component);
-		}
+		List<Component> components = getComponents();
+		List<Controller> controllers = getControllers(components);
 
 		requireNoDuplicateMappings(controllers);
 
@@ -54,6 +44,12 @@ public class CiconiaApplication {
 				.stream()
 				.map(component -> (InstantiatableObject) component)
 				.collect(Collectors.toList());
+
+		List<Configurer> configurers = getConfigurers();
+		for(Configurer configurer : configurers){
+			instantiatableObjects.add(configurer);
+			instantiatableObjects.addAll(configurer.getMethods());
+		}
 
 		ObjectsDependenciesGraph graph = new ObjectsDependenciesGraph(instantiatableObjects);
 		List<InstantiatableObject> cycle = graph.findDependencyCycle();
@@ -70,6 +66,36 @@ public class CiconiaApplication {
 
 		MappingsContainer container = new MappingsContainer(controllers, configuration);
 		CiconiaHandler.initialize(container, objectsDatabase, configuration);
+	}
+
+	private List<Component> getComponents(){
+		List<Class<?>> componentsClasses = ComponentsParser.parse(primarySource);
+
+		List<Component> components = new ArrayList<>();
+		ControllersProcessor controllersProcessor = new ControllersProcessor(configuration);
+		for(Class<?> cl : componentsClasses){
+			Component component;
+			if(cl.isAnnotationPresent(Mapping.class)) {
+				component = controllersProcessor.processControllerClass(cl);
+			} else {
+				component = new Component(cl);
+			}
+			components.add(component);
+		}
+		return components;
+	}
+
+	private List<Controller> getControllers(List<Component> components){
+		return components
+				.stream()
+				.filter(component -> component instanceof Controller)
+				.map(component -> (Controller) component)
+				.collect(Collectors.toList());
+	}
+
+	public List<Configurer> getConfigurers(){
+		List<Class<?>> list = ConfigurationsParser.parse(primarySource);
+		return new ConfigurerProcessor().process(list);
 	}
 
 	private String getPrettyCycle(List<InstantiatableObject> cycle) {
