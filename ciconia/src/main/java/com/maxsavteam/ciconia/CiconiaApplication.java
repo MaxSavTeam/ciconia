@@ -64,8 +64,10 @@ public class CiconiaApplication {
 
 		InstantiationUtils.instantiateComponents(topologicalOrder, objectsDatabase);
 
-		MappingsContainer container = new MappingsContainer(controllers, configuration);
-		CiconiaHandler.initialize(container, objectsDatabase, configuration);
+		if(configuration.isHandlerEnabled()) {
+			MappingsContainer container = new MappingsContainer(controllers, configuration);
+			CiconiaHandler.initialize(container, objectsDatabase, configuration);
+		}
 	}
 
 	private List<Component> getComponents(){
@@ -75,7 +77,7 @@ public class CiconiaApplication {
 		ControllersProcessor controllersProcessor = new ControllersProcessor(configuration);
 		for(Class<?> cl : componentsClasses){
 			Component component;
-			if(cl.isAnnotationPresent(Mapping.class)) {
+			if(cl.isAnnotationPresent(Mapping.class) && configuration.isHandlerEnabled()) {
 				component = controllersProcessor.processControllerClass(cl);
 			} else {
 				component = new Component(cl);

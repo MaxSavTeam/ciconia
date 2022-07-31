@@ -4,7 +4,6 @@ import com.maxsavteam.ciconia.CiconiaConfiguration;
 import com.maxsavteam.ciconia.annotation.handler.ParameterAnnotationHandler;
 import com.maxsavteam.ciconia.sparkjava.annotation.handler.CookieHandler;
 import com.maxsavteam.ciconia.sparkjava.annotation.handler.HeaderHandler;
-import spark.Spark;
 
 public class CiconiaSparkConfiguration extends CiconiaConfiguration {
 
@@ -50,6 +49,13 @@ public class CiconiaSparkConfiguration extends CiconiaConfiguration {
 		@Override
 		public Builder addParameterAnnotationHandler(ParameterAnnotationHandler handler) {
 			super.addParameterAnnotationHandler(handler);
+			return this;
+		}
+
+		@Override
+		public Builder setHandlerEnabled(boolean handlerEnabled) {
+			if(!handlerEnabled)
+				throw new UnsupportedOperationException("Handler cannot be disabled");
 			return this;
 		}
 
