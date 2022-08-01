@@ -26,7 +26,7 @@ public class InstantiationUtils {
 		for(int i = 0; i < args.length; i++){
 			Class<?> parameter = ctor.getParameterTypes()[i];
 			int finalI = i;
-			objectsDatabase.findObject(parameter)
+			objectsDatabase.findSuitableObject(parameter)
 					.ifPresent(obj -> args[finalI] = obj);
 		}
 		Object instance;
