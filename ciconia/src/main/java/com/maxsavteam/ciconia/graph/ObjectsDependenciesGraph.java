@@ -27,7 +27,7 @@ public class ObjectsDependenciesGraph {
 			for(Class<?> cl : object.getDependenciesClasses()){
 				InstantiatableObject dependency = classObjectsMap.get(cl);
 				if(dependency == null)
-					throw new InstantiationException(); // this shouldn't happen
+					throw new InstantiationException("Cannot find dependency class " + cl.getName() + " for object " + object.getaClass().getName());
 				graph.addEdge(object, dependency);
 			}
 		}
