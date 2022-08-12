@@ -8,6 +8,7 @@ import com.maxsavteam.ciconia.exception.MethodNotAccessibleException;
 import com.maxsavteam.ciconia.utils.CiconiaUtils;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,12 @@ public class ConfigurerProcessor {
 		for(Method method : cl.getDeclaredMethods()){
 			if(!method.isAnnotationPresent(ObjectFactory.class))
 				continue;
+
+			int modifiers = method.getModifiers();
+			if(Modifier.isStatic(modifiers)
+				|| !Modifier.isPublic(modifiers))
+				continue;
+
 			Class<?> returnType = method.getReturnType();
 			if(returnType == Void.TYPE || returnType.isPrimitive())
 				throw new IllegalObjectFactoryMethodDeclarationException("Method should not return void or primitive type");
