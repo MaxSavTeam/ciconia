@@ -9,6 +9,7 @@ import com.maxsavteam.ciconia.component.MappingWrapper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +43,12 @@ public class ControllersProcessor {
 		Mapping mapping = method.getAnnotation(Mapping.class);
 		if(mapping == null)
 			return Optional.empty();
+
+		int modifiers = method.getModifiers();
+		if(Modifier.isStatic(modifiers)
+				|| !Modifier.isPublic(modifiers))
+			return Optional.empty();
+
 		requireValidMapping(mapping.value(), method.getDeclaringClass().getName() + "#" + method.getName(), configuration.getPathSeparator());
 
 		Annotation[][] parameterAnnotations = method.getParameterAnnotations();
