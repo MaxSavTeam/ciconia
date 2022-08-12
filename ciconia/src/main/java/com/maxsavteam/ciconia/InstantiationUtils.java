@@ -15,7 +15,7 @@ public class InstantiationUtils {
 		ObjectsDatabase immutableDatabase = objectsDatabase.immutable();
 		for(InstantiatableObject object : objects) {
 			Object instance = object.create(immutableDatabase);
-			objectsDatabase.addObject(instance);
+			objectsDatabase.addObject(instance, object.getaClass());
 		}
 	}
 
@@ -26,7 +26,7 @@ public class InstantiationUtils {
 		for(int i = 0; i < args.length; i++){
 			Class<?> parameter = ctor.getParameterTypes()[i];
 			int finalI = i;
-			objectsDatabase.findSuitableObject(parameter)
+			objectsDatabase.findObject(parameter)
 					.ifPresent(obj -> args[finalI] = obj);
 		}
 		Object instance;

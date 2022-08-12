@@ -45,8 +45,8 @@ public class CiconiaSparkApplication {
 		jsonObject.put("params", params);
 
 		ObjectsDatabase database = new ObjectsDatabase();
-		database.addObject(request);
-		database.addObject(response);
+		database.addObject(request, Request.class);
+		database.addObject(response, Response.class);
 
 		Object result = CiconiaHandler.getInstance().handle(
 				jsonObject,

@@ -10,7 +10,7 @@ class Utils {
 	private Utils(){}
 
 	public static Request getRequest(ObjectsDatabase contextualDatabase){
-		Optional<Request> op = contextualDatabase.findSuitableObject(Request.class);
+		Optional<Request> op = contextualDatabase.findObject(Request.class);
 		if(op.isEmpty())
 			throw new IllegalStateException("No request found in context");
 		return op.get();

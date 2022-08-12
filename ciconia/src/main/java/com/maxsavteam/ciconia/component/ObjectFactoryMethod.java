@@ -57,7 +57,7 @@ public class ObjectFactoryMethod extends InstantiatableObject {
 			Object object = op.get();
 			Object[] parameters = new Object[this.parameters.size()];
 			for(int i = 0; i < parameters.length; i++){
-				op = database.findSuitableObject(this.parameters.get(i));
+				op = database.findObject(this.parameters.get(i));
 				if(op.isEmpty()) {
 					throw new InstantiationException(
 							String.format(

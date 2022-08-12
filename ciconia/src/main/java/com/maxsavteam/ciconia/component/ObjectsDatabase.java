@@ -8,7 +8,9 @@ public class ObjectsDatabase {
 
 	private final Map<String, Object> objectMap = new HashMap<>();
 
-	public void addObject(Object component){
+	public void addObject(Object component, Class<?> asClass){
+		if(!asClass.isAssignableFrom(component.getClass()))
+			throw new IllegalStateException("Class " + asClass.getName() + " is not assignable from " + component.getClass().getName());
 		objectMap.put(component.getClass().getName(), component);
 	}
 
@@ -17,18 +19,6 @@ public class ObjectsDatabase {
 		if(objectMap.containsKey(clazz.getName()))
 			return (Optional<T>) Optional.of(objectMap.get(clazz.getName()));
 		return Optional.empty();
-	}
-
-	public <T> Optional<T> findSuitableObject(Class<T> clazz){
-		Optional<T> op = findObject(clazz);
-		if(op.isPresent())
-			return op;
-		@SuppressWarnings("unchecked")
-		Optional<T> t = (Optional<T>) objectMap.values()
-				.stream()
-				.filter(entry -> clazz.isAssignableFrom(entry.getClass()))
-				.findFirst();
-		return t;
 	}
 
 	public ObjectsDatabase immutable(){
@@ -44,18 +34,13 @@ public class ObjectsDatabase {
 		}
 
 		@Override
-		public void addObject(Object component) {
+		public void addObject(Object component, Class<?> asClass) {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
 		public <T> Optional<T> findObject(Class<T> clazz){
 			return objectsDatabase.findObject(clazz);
-		}
-
-		@Override
-		public <T> Optional<T> findSuitableObject(Class<T> clazz){
-			return objectsDatabase.findSuitableObject(clazz);
 		}
 
 	}
