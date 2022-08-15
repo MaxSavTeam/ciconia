@@ -14,6 +14,7 @@ import com.maxsavteam.ciconia.exception.InstantiationException;
 import com.maxsavteam.ciconia.graph.ObjectsDependenciesGraph;
 import com.maxsavteam.ciconia.parser.ComponentsParser;
 import com.maxsavteam.ciconia.parser.ConfigurationsParser;
+import com.maxsavteam.ciconia.processor.ComponentsProcessor;
 import com.maxsavteam.ciconia.processor.ConfigurerProcessor;
 import com.maxsavteam.ciconia.processor.ControllersProcessor;
 import com.maxsavteam.ciconia.utils.Pair;
@@ -84,12 +85,13 @@ public class CiconiaApplication {
 
 		List<Component> components = new ArrayList<>();
 		ControllersProcessor controllersProcessor = new ControllersProcessor(configuration);
+		ComponentsProcessor componentsProcessor = new ComponentsProcessor();
 		for(Class<?> cl : componentsClasses){
 			Component component;
 			if(cl.isAnnotationPresent(Mapping.class) && configuration.isHandlerEnabled()) {
 				component = controllersProcessor.processControllerClass(cl);
 			} else {
-				component = new Component(cl);
+				component = componentsProcessor.process(cl);
 			}
 			components.add(component);
 		}
