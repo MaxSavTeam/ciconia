@@ -7,7 +7,7 @@ import com.maxsavteam.ciconia.annotation.ObjectFactory;
 public class Config {
 
 	@ObjectFactory
-	private TestBean createBean(){
+	public TestBean createBean(){
 		TestBean testBean = new TestBean();
 		System.out.println("Created bean " + testBean);
 		return testBean;

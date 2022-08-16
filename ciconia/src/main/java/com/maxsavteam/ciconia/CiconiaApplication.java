@@ -7,7 +7,6 @@ import com.maxsavteam.ciconia.component.Configurer;
 import com.maxsavteam.ciconia.component.Controller;
 import com.maxsavteam.ciconia.component.ExecutableMethod;
 import com.maxsavteam.ciconia.component.InstantiatableObject;
-import com.maxsavteam.ciconia.component.ObjectFactoryMethod;
 import com.maxsavteam.ciconia.component.ObjectsDatabase;
 import com.maxsavteam.ciconia.exception.DuplicateMappingException;
 import com.maxsavteam.ciconia.exception.InstantiationException;
@@ -17,6 +16,7 @@ import com.maxsavteam.ciconia.parser.ConfigurationsParser;
 import com.maxsavteam.ciconia.processor.ComponentsProcessor;
 import com.maxsavteam.ciconia.processor.ConfigurerProcessor;
 import com.maxsavteam.ciconia.processor.ControllersProcessor;
+import com.maxsavteam.ciconia.utils.CiconiaUtils;
 import com.maxsavteam.ciconia.utils.Pair;
 
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ public class CiconiaApplication {
 		ObjectsDependenciesGraph graph = new ObjectsDependenciesGraph(instantiatableObjects);
 		List<InstantiatableObject> cycle = graph.findDependencyCycle();
 		if (!cycle.isEmpty()) {
-			String cycleString = getPrettyCycle(cycle);
+			String cycleString = CiconiaUtils.getPrettyCycle(cycle);
 			throw new InstantiationException("Dependency cycle found\n" + cycleString);
 		}
 
@@ -109,37 +109,6 @@ public class CiconiaApplication {
 	public List<Configurer> getConfigurers(){
 		List<Class<?>> list = ConfigurationsParser.parse(primarySource);
 		return new ConfigurerProcessor().process(list);
-	}
-
-	private String getPrettyCycle(List<InstantiatableObject> cycle) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("┌─────┐\n");
-		for (int i = 0; i < cycle.size(); i++) {
-			String name;
-			InstantiatableObject object = cycle.get(i);
-			if(object instanceof ObjectFactoryMethod){
-				ObjectFactoryMethod method = (ObjectFactoryMethod) object;
-				name = String.format(
-						"Object factory method %s in %s",
-						method.getMethod().getName(),
-						method.getMethod().getDeclaringClass().getName()
-				);
-			} else{
-				Class<?> cl = object.getaClass();
-				name = String.format(
-						"Component %s (%s)",
-						cl.getName(),
-						cl.getSimpleName()
-				);
-			}
-			sb.append("|  ").append(name)
-					.append("\n");
-			if (i != cycle.size() - 1) {
-				sb.append(String.format("↑     ↓%n"));
-			}
-		}
-		sb.append("└─────┘");
-		return sb.toString();
 	}
 
 	private void requireNoDuplicateMappings(List<Controller> controllers) {
