@@ -7,13 +7,14 @@ import java.lang.annotation.Target;
 
 /**
  * Indicates, that path variable should be passed to parameter.
- *
- * <pre>{@code
- * @Mapping("/process/{id}")
+ * <pre>
+ * <code>
+ * {@literal @}Mapping("/process/{id}")
  * public void processUser(@PathVariable("id") String id){
  *    // ...
  * }
- * }</pre>
+ * </code>
+ * </pre>
  * */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)

@@ -48,13 +48,19 @@ public class CiconiaConfiguration {
 		}
 
 		/**
-		 * Specifies character by which the mappings will be divided into sections.
+		 * @param pathSeparator Character by which the mappings will be divided into sections.
+		 * @return this builder
 		 * */
 		public Builder setPathSeparator(char pathSeparator) {
 			this.pathSeparator = pathSeparator;
 			return this;
 		}
 
+		/**
+		 * Adds parameter annotation handler to the list of handlers.
+		 * @param handler Parameter annotation handler to add.
+		 * @return this builder
+		 * */
 		public Builder addParameterAnnotationHandler(ParameterAnnotationHandler handler) {
 			this.parameterAnnotationHandlers.add(handler);
 			return this;
@@ -62,6 +68,8 @@ public class CiconiaConfiguration {
 
 		/**
 		 * If <code>false</code> {@link CiconiaHandler} will be disabled and will not be able to process requests.
+		 * @param handlerEnabled {@code false} to disable {@link CiconiaHandler}.
+		 * @return this builder
 		 * */
 		public Builder setHandlerEnabled(boolean handlerEnabled) {
 			this.handlerEnabled = handlerEnabled;

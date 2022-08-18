@@ -10,6 +10,8 @@ public class ObjectsDatabase {
 
 	/**
 	 * Stores an object in the database under given class, even if component class and given class are not the same.
+	 * @param component Object to store.
+	 * @param asClass Class under which object should be stored.
 	 * @throws IllegalStateException if class is not assignable from object class
 	 * */
 	public void addObject(Object component, Class<?> asClass){
@@ -19,7 +21,9 @@ public class ObjectsDatabase {
 	}
 
 	/**
-	 * Returns object of given class if it is present in the database.
+	 * @param <T> Type of the object to get.
+	 * @param clazz Class of the object to get.
+	 * @return object of given class if it is present in the database.
 	 * */
 	@SuppressWarnings("unchecked")
 	public <T> Optional<T> findObject(Class<T> clazz){

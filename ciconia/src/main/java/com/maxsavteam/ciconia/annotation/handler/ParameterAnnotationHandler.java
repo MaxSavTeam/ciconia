@@ -15,7 +15,8 @@ public interface ParameterAnnotationHandler {
 	Object NULL_VALUE = Converter.NULL_VALUE;
 
 	/**
-	 * Returns true if handler can process annotation.
+	 * @param annotationClass annotation class
+	 * @return true if handler can process annotation.
 	 * */
 	boolean supports(Class<? extends Annotation> annotationClass);
 
@@ -27,6 +28,7 @@ public interface ParameterAnnotationHandler {
 	 * @param annotation Annotation that parameter is annotated with.
 	 * @param parameterType Type of parameter.
 	 * @param context Context of invocation.
+	 * @return parameter value in Optional.
 	 * */
 	Optional<Object> handle(Annotation annotation, Class<?> parameterType, Context context);
 
