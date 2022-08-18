@@ -148,10 +148,21 @@ public class CiconiaApplication {
 		}
 	}
 
+	/**
+	 * Starts Ciconia
+	 *
+	 * @param source class in root package (usually it is Main class), where Ciconia will scan for components, configurations, etc. Entities outside this package will not be found.
+	 * */
 	public static void run(Class<?> source) {
 		run(source, new CiconiaConfiguration.Builder().build());
 	}
 
+	/**
+	 * Start Ciconia
+	 *
+	 * @param source class in root package (usually it is Main class), where Ciconia will scan for components, configurations, etc. Entities outside this package will not be found.
+	 * @param configuration Ciconia configuration
+	 * */
 	public static void run(Class<?> source, CiconiaConfiguration configuration) {
 		new CiconiaApplication(source, configuration).run();
 	}

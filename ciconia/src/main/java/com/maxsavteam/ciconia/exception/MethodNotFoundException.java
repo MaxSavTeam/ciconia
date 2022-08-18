@@ -1,5 +1,8 @@
 package com.maxsavteam.ciconia.exception;
 
+/**
+ * Thrown, when requested method not found.
+ * */
 public class MethodNotFoundException extends ExecutionException {
 
 	public MethodNotFoundException() {

@@ -8,12 +8,19 @@ public class ObjectsDatabase {
 
 	private final Map<String, Object> objectMap = new HashMap<>();
 
+	/**
+	 * Stores an object in the database under given class, even if component class and given class are not the same.
+	 * @throws IllegalStateException if class is not assignable from object class
+	 * */
 	public void addObject(Object component, Class<?> asClass){
 		if(!asClass.isAssignableFrom(component.getClass()))
 			throw new IllegalStateException("Class " + asClass.getName() + " is not assignable from " + component.getClass().getName());
 		objectMap.put(component.getClass().getName(), component);
 	}
 
+	/**
+	 * Returns object of given class if it is present in the database.
+	 * */
 	@SuppressWarnings("unchecked")
 	public <T> Optional<T> findObject(Class<T> clazz){
 		if(objectMap.containsKey(clazz.getName()))

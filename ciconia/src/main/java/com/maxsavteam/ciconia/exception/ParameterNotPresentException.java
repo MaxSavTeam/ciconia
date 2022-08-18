@@ -1,5 +1,8 @@
 package com.maxsavteam.ciconia.exception;
 
+/**
+ * Thrown when a parameter, required for method, not presented in request
+ * */
 public class ParameterNotPresentException extends ExecutionException {
 
 	public ParameterNotPresentException() {

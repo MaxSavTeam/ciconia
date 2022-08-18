@@ -6,6 +6,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Configures Ciconia application.
+ * <br>
+ * <a href="https://ciconia.maxsavteam.com/docs/#/configuration/ciconia-configuration-class">Documentation</a>
+ * */
 public class CiconiaConfiguration {
 
 	private final char pathSeparator;
@@ -42,6 +47,9 @@ public class CiconiaConfiguration {
 			this.pathSeparator = configuration.pathSeparator;
 		}
 
+		/**
+		 * Specifies character by which the mappings will be divided into sections.
+		 * */
 		public Builder setPathSeparator(char pathSeparator) {
 			this.pathSeparator = pathSeparator;
 			return this;
@@ -52,6 +60,9 @@ public class CiconiaConfiguration {
 			return this;
 		}
 
+		/**
+		 * If <code>false</code> {@link CiconiaHandler} will be disabled and will not be able to process requests.
+		 * */
 		public Builder setHandlerEnabled(boolean handlerEnabled) {
 			this.handlerEnabled = handlerEnabled;
 			return this;
