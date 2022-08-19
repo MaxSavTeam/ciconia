@@ -17,7 +17,7 @@ public class ObjectsDatabase {
 	public void addObject(Object component, Class<?> asClass){
 		if(!asClass.isAssignableFrom(component.getClass()))
 			throw new IllegalStateException("Class " + asClass.getName() + " is not assignable from " + component.getClass().getName());
-		objectMap.put(component.getClass().getName(), component);
+		objectMap.put(asClass.getName(), component);
 	}
 
 	/**
