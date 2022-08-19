@@ -4,6 +4,11 @@ import com.maxsavteam.ciconia.component.ObjectsDatabase;
 
 import java.util.Map;
 
+/**
+ * Contains context of individual request: request path, method mapping, immutable global objects database,
+ * immutable contextual objects database, map with parameters and map with path variables
+ * @see ObjectsDatabase
+ * */
 public class Context {
 
 	private String methodPath;
