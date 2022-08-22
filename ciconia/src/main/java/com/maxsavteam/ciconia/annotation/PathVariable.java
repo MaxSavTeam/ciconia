@@ -15,6 +15,8 @@ import java.lang.annotation.Target;
  * }
  * </code>
  * </pre>
+ * See <a href="https://ciconia.maxsavteam.com/docs/#/components/controllers?id=path-variables">documentation</a>
+ * @author Max Savitsky
  * */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)

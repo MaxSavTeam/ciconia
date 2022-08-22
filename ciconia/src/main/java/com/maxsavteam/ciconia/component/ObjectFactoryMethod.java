@@ -27,7 +27,7 @@ public class ObjectFactoryMethod extends InstantiatableObject {
 	@Override
 	public List<Class<?>> getDependenciesClasses() {
 		List<Class<?>> list = new ArrayList<>();
-		list.add(method.getDeclaringClass()); // required to invoke the method
+		list.add(method.getDeclaringClass()); // method have to declare dependency on containing class
 		list.addAll(parameters);
 		return list;
 	}

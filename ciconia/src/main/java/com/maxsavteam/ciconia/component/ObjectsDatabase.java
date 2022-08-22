@@ -10,29 +10,35 @@ public class ObjectsDatabase {
 
 	/**
 	 * Stores an object in the database under given class, even if component class and given class are not the same.
+	 *
 	 * @param component Object to store.
-	 * @param asClass Class under which object should be stored.
+	 * @param asClass   Class under which object should be stored.
 	 * @throws IllegalStateException if class is not assignable from object class
-	 * */
-	public void addObject(Object component, Class<?> asClass){
-		if(!asClass.isAssignableFrom(component.getClass()))
+	 */
+	public void addObject(Object component, Class<?> asClass) {
+		if (!asClass.isAssignableFrom(component.getClass()))
 			throw new IllegalStateException("Class " + asClass.getName() + " is not assignable from " + component.getClass().getName());
 		objectMap.put(asClass.getName(), component);
 	}
 
 	/**
-	 * @param <T> Type of the object to get.
+	 * @param <T>   Type of the object to get.
 	 * @param clazz Class of the object to get.
 	 * @return object of given class if it is present in the database.
-	 * */
+	 */
 	@SuppressWarnings("unchecked")
-	public <T> Optional<T> findObject(Class<T> clazz){
-		if(objectMap.containsKey(clazz.getName()))
+	public <T> Optional<T> findObject(Class<T> clazz) {
+		if (objectMap.containsKey(clazz.getName()))
 			return (Optional<T>) Optional.of(objectMap.get(clazz.getName()));
 		return Optional.empty();
 	}
 
-	public ObjectsDatabase immutable(){
+	/**
+	 * Wraps database in immutable one, which throws {@link UnsupportedOperationException} when object addition operation is performed on it.
+	 *
+	 * @return immutable copy of the database.
+	 */
+	public ObjectsDatabase immutable() {
 		return new ImmutableObjectsDatabase(this);
 	}
 
@@ -50,7 +56,7 @@ public class ObjectsDatabase {
 		}
 
 		@Override
-		public <T> Optional<T> findObject(Class<T> clazz){
+		public <T> Optional<T> findObject(Class<T> clazz) {
 			return objectsDatabase.findObject(clazz);
 		}
 
