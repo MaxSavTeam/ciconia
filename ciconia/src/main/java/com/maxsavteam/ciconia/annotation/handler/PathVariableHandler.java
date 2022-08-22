@@ -24,7 +24,7 @@ public class PathVariableHandler implements ParameterAnnotationHandler {
 					String.format(
 							"Path variable \"%s\" is not declared in method path (%s)",
 							variableName,
-							context.getMethodPath()
+							context.getMethodDeclarationPath()
 					)
 			);
 		}

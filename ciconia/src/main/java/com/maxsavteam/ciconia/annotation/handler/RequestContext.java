@@ -11,19 +11,19 @@ import java.util.Map;
  * */
 public class RequestContext {
 
-	private String methodPath;
+	private String methodDeclarationPath;
 	private String methodMapping;
 	private ObjectsDatabase objectsDatabase;
 	private ObjectsDatabase contextualObjectsDatabase;
 	private Map<String, Object> parameters;
 	private Map<String, String> pathVariables;
 
-	public String getMethodPath() {
-		return methodPath;
+	public String getMethodDeclarationPath() {
+		return methodDeclarationPath;
 	}
 
-	public RequestContext setMethodPath(String methodPath) {
-		this.methodPath = methodPath;
+	public RequestContext setMethodDeclarationPath(String methodDeclarationPath) {
+		this.methodDeclarationPath = methodDeclarationPath;
 		return this;
 	}
 

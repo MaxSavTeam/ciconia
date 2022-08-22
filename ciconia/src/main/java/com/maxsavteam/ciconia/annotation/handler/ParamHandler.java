@@ -29,7 +29,7 @@ public class ParamHandler implements ParameterAnnotationHandler {
 								"Parameter \"%s\" is not present, but required for method \"%s\" (%s)",
 								param.value(),
 								context.getMethodMapping(),
-								context.getMethodPath()
+								context.getMethodDeclarationPath()
 						)
 				);
 			} else {
