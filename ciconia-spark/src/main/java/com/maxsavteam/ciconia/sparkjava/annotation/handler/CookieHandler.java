@@ -1,6 +1,6 @@
 package com.maxsavteam.ciconia.sparkjava.annotation.handler;
 
-import com.maxsavteam.ciconia.annotation.handler.Context;
+import com.maxsavteam.ciconia.annotation.handler.RequestContext;
 import com.maxsavteam.ciconia.annotation.handler.ParameterAnnotationHandler;
 import com.maxsavteam.ciconia.sparkjava.annotation.Cookie;
 import spark.Request;
@@ -16,7 +16,7 @@ public class CookieHandler implements ParameterAnnotationHandler {
 	}
 
 	@Override
-	public Optional<Object> handle(Annotation annotation, Class<?> parameterType, Context context) {
+	public Optional<Object> handle(Annotation annotation, Class<?> parameterType, RequestContext context) {
 		Cookie cookie = (Cookie) annotation;
 		Request request = Utils.getRequest(context.getContextualObjectsDatabase());
 		String cookieName = cookie.value();

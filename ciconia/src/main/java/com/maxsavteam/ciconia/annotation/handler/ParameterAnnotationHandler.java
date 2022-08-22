@@ -30,6 +30,6 @@ public interface ParameterAnnotationHandler {
 	 * @param context Context of invocation.
 	 * @return parameter value in Optional.
 	 * */
-	Optional<Object> handle(Annotation annotation, Class<?> parameterType, Context context);
+	Optional<Object> handle(Annotation annotation, Class<?> parameterType, RequestContext context);
 
 }

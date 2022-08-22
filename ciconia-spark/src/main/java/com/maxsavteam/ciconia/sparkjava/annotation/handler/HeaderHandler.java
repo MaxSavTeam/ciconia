@@ -1,8 +1,7 @@
 package com.maxsavteam.ciconia.sparkjava.annotation.handler;
 
-import com.maxsavteam.ciconia.annotation.handler.Context;
+import com.maxsavteam.ciconia.annotation.handler.RequestContext;
 import com.maxsavteam.ciconia.annotation.handler.ParameterAnnotationHandler;
-import com.maxsavteam.ciconia.component.ObjectsDatabase;
 import com.maxsavteam.ciconia.sparkjava.annotation.Header;
 import spark.Request;
 
@@ -17,7 +16,7 @@ public class HeaderHandler implements ParameterAnnotationHandler {
 	}
 
 	@Override
-	public Optional<Object> handle(Annotation annotation, Class<?> parameterType, Context context) {
+	public Optional<Object> handle(Annotation annotation, Class<?> parameterType, RequestContext context) {
 		Header header = (Header) annotation;
 		String headerName = header.value();
 		Request request = Utils.getRequest(context.getContextualObjectsDatabase());

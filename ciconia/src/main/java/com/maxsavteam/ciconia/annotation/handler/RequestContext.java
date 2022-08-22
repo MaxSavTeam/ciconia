@@ -9,7 +9,7 @@ import java.util.Map;
  * immutable contextual objects database, map with parameters and map with path variables
  * @see ObjectsDatabase
  * */
-public class Context {
+public class RequestContext {
 
 	private String methodPath;
 	private String methodMapping;
@@ -22,7 +22,7 @@ public class Context {
 		return methodPath;
 	}
 
-	public Context setMethodPath(String methodPath) {
+	public RequestContext setMethodPath(String methodPath) {
 		this.methodPath = methodPath;
 		return this;
 	}
@@ -31,7 +31,7 @@ public class Context {
 		return methodMapping;
 	}
 
-	public Context setMethodMapping(String methodMapping) {
+	public RequestContext setMethodMapping(String methodMapping) {
 		this.methodMapping = methodMapping;
 		return this;
 	}
@@ -40,7 +40,7 @@ public class Context {
 		return componentsDatabase;
 	}
 
-	public Context setComponentsDatabase(ObjectsDatabase componentsDatabase) {
+	public RequestContext setComponentsDatabase(ObjectsDatabase componentsDatabase) {
 		this.componentsDatabase = componentsDatabase;
 		return this;
 	}
@@ -49,7 +49,7 @@ public class Context {
 		return contextualObjectsDatabase;
 	}
 
-	public Context setContextualObjectsDatabase(ObjectsDatabase contextualObjectsDatabase) {
+	public RequestContext setContextualObjectsDatabase(ObjectsDatabase contextualObjectsDatabase) {
 		this.contextualObjectsDatabase = contextualObjectsDatabase;
 		return this;
 	}
@@ -58,7 +58,7 @@ public class Context {
 		return parameters;
 	}
 
-	public Context setParameters(Map<String, Object> parameters) {
+	public RequestContext setParameters(Map<String, Object> parameters) {
 		this.parameters = parameters;
 		return this;
 	}
@@ -67,7 +67,7 @@ public class Context {
 		return pathVariables;
 	}
 
-	public Context setPathVariables(Map<String, String> pathVariables) {
+	public RequestContext setPathVariables(Map<String, String> pathVariables) {
 		this.pathVariables = pathVariables;
 		return this;
 	}

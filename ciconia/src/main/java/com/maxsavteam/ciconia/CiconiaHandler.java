@@ -1,7 +1,7 @@
 package com.maxsavteam.ciconia;
 
 import com.maxsavteam.ciconia.annotation.RequestMethod;
-import com.maxsavteam.ciconia.annotation.handler.Context;
+import com.maxsavteam.ciconia.annotation.handler.RequestContext;
 import com.maxsavteam.ciconia.annotation.handler.ParamHandler;
 import com.maxsavteam.ciconia.annotation.handler.ParameterAnnotationHandler;
 import com.maxsavteam.ciconia.annotation.handler.PathVariableHandler;
@@ -93,7 +93,7 @@ public class CiconiaHandler {
 		Map<String, String> pathVariablesMap = executionContext.getPathVariablesMap();
 		ObjectsDatabase contextualDatabase = executionContext.getContextualDatabase();
 
-		Context context = new Context()
+		RequestContext context = new RequestContext()
 				.setComponentsDatabase(objectsDatabase.immutable())
 				.setContextualObjectsDatabase(contextualDatabase.immutable())
 				.setParameters(Collections.unmodifiableMap(params.toMap()))

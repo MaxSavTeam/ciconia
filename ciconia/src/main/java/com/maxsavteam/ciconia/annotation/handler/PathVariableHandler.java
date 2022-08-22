@@ -16,7 +16,7 @@ public class PathVariableHandler implements ParameterAnnotationHandler {
 	}
 
 	@Override
-	public Optional<Object> handle(Annotation annotation, Class<?> parameterType, Context context) {
+	public Optional<Object> handle(Annotation annotation, Class<?> parameterType, RequestContext context) {
 		PathVariable pathVariable = (PathVariable) annotation;
 		String variableName = pathVariable.value();
 		if(!context.getPathVariables().containsKey(variableName)) {

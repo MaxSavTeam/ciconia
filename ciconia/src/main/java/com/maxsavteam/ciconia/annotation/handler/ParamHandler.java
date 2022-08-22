@@ -18,7 +18,7 @@ public class ParamHandler implements ParameterAnnotationHandler {
 	}
 
 	@Override
-	public Optional<Object> handle(Annotation annotation, Class<?> parameterType, Context context) {
+	public Optional<Object> handle(Annotation annotation, Class<?> parameterType, RequestContext context) {
 		Param param = (Param) annotation;
 		Map<String, Object> parameters = context.getParameters();
 		Object paramObject = parameters.getOrDefault(param.value(), null);
