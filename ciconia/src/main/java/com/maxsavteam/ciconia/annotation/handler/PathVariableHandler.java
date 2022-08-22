@@ -8,6 +8,10 @@ import com.maxsavteam.ciconia.exception.InvalidPathVariableException;
 import java.lang.annotation.Annotation;
 import java.util.Optional;
 
+/**
+ * {@link PathVariable} processor
+ * @author Max Savitsky
+ * */
 public class PathVariableHandler implements ParameterAnnotationHandler {
 
 	@Override

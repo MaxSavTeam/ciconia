@@ -7,8 +7,8 @@ import java.util.Optional;
 
 /**
  * Handles custom parameter annotations, which annotated with {@link com.maxsavteam.ciconia.annotation.ParameterAnnotation}.
- * <br>
- * <a href="https://ciconia.maxsavteam.com/docs/#/configuration/parameter-annotation-handler">Guide</a>
+ * @see <a href="https://ciconia.maxsavteam.com/docs/#/configuration/parameter-annotation-handler">Guide</a>
+ * @author Max Savitsky
  * */
 public interface ParameterAnnotationHandler {
 

@@ -9,7 +9,7 @@ public class ObjectsDatabase {
 	private final Map<String, Object> objectMap = new HashMap<>();
 
 	/**
-	 * Stores an object in the database under given class, even if component class and given class are not the same.
+	 * Stores an object in the database under given class if this class is assignable from provided component.
 	 *
 	 * @param component Object to store.
 	 * @param asClass   Class under which object should be stored.

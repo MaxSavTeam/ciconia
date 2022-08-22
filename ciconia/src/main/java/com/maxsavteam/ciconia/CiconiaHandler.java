@@ -55,10 +55,27 @@ public class CiconiaHandler {
 		instance = new CiconiaHandler(mappingsContainer, objectsDatabase, configuration);
 	}
 
+	/**
+	 * Handles the request and returns the result.
+	 *
+	 * @param jsonObject the request JSON object
+	 * @param requestMethod the request method
+	 * @return method execution result or {@link #VOID} if method is void
+	 * @see <a href="https://ciconia.maxsavteam.com/docs/#/ciconia-handler?id=json-format">Request JSON format</a>
+	 * */
 	public Object handle(JSONObject jsonObject, RequestMethod requestMethod){
 		return handle(jsonObject, requestMethod, new ObjectsDatabase());
 	}
 
+	/**
+	 * Handles the request and returns the result.
+	 *
+	 * @param jsonObject the request JSON object
+	 * @param requestMethod the request method
+	 * @param contextualDatabase database containing objects, which are related to current request
+	 * @return method execution result or {@link #VOID} if method is void
+	 * @see <a href="https://ciconia.maxsavteam.com/docs/#/ciconia-handler?id=json-format">Request JSON format</a>
+	 * */
 	public Object handle(JSONObject jsonObject, RequestMethod requestMethod, @Nonnull ObjectsDatabase contextualDatabase) {
 		String methodName = jsonObject.getString("method");
 

@@ -8,8 +8,8 @@ import java.util.List;
 
 /**
  * Configures Ciconia application.
- * <br>
- * <a href="https://ciconia.maxsavteam.com/docs/#/configuration/ciconia-configuration-class">Documentation</a>
+ * @see <a href="https://ciconia.maxsavteam.com/docs/#/configuration/ciconia-configuration-class">Documentation</a>
+ * @author Max Savitsky
  * */
 public class CiconiaConfiguration {
 

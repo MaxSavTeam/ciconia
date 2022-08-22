@@ -2,6 +2,11 @@ package com.maxsavteam.ciconia.component;
 
 import java.util.List;
 
+/**
+ * Represents particular controller class.
+ * @see Component
+ * @author Max Savitsky
+ * */
 public class Controller extends Component {
 	private final String mappingName;
 	private final List<ExecutableMethod> executableMethods;

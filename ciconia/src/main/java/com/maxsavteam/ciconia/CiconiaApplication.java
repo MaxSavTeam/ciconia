@@ -158,7 +158,7 @@ public class CiconiaApplication {
 	}
 
 	/**
-	 * Start Ciconia
+	 * Starts Ciconia
 	 *
 	 * @param source class in root package (usually it is Main class), where Ciconia will scan for components, configurations, etc. Entities outside this package will not be found.
 	 * @param configuration Ciconia configuration

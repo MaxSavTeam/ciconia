@@ -6,7 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * If annotation is applied to component, then it will be treated as controller
+ * Specifies path, according to which method will be called. Mapping can contain path variables
+ * @see <a href="https://ciconia.maxsavteam.com/docs/#/components/controllers?id=mapping">Mapping documentation</a>
  * */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})

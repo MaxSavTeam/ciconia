@@ -11,6 +11,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Wraps mapping and resolves path variables.
+ * @author Max Savitsky
+ * */
 public class MappingWrapper {
 
 	private static final Pattern VARIABLE_NAME_PATTERN = Pattern.compile("^[a-zA-Z_]+$");

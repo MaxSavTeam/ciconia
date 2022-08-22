@@ -10,6 +10,10 @@ import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * {@link Param} processor
+ * @author Max Savitsky
+ * */
 public class ParamHandler implements ParameterAnnotationHandler {
 
 	@Override

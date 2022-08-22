@@ -1,12 +1,13 @@
 package com.maxsavteam.ciconia.component;
 
-import com.maxsavteam.ciconia.annotation.Param;
-import com.maxsavteam.ciconia.annotation.PathVariable;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.List;
 
+/**
+ * Represents method with mapping in controller.
+ * @author Max Savitsky
+ * */
 public class ExecutableMethod {
 
 	private final Method method;

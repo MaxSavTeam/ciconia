@@ -11,6 +11,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Represents object factory method from configuration as an individual object, separate from the declaring configuration class.
+ * @author Max Savitsky
+ */
 public class ObjectFactoryMethod extends InstantiatableObject {
 
 	private final Method method;
@@ -56,9 +60,9 @@ public class ObjectFactoryMethod extends InstantiatableObject {
 			}
 			Object object = op.get();
 			Object[] parameters = new Object[this.parameters.size()];
-			for(int i = 0; i < parameters.length; i++){
+			for (int i = 0; i < parameters.length; i++) {
 				op = database.findObject(this.parameters.get(i));
-				if(op.isEmpty()) {
+				if (op.isEmpty()) {
 					throw new InstantiationException(
 							String.format(
 									"Parameter %d in %s require object of type %s that could not be found",

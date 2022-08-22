@@ -7,8 +7,10 @@ import java.util.Map;
 /**
  * Contains context of individual request: request path, method mapping, immutable global objects database,
  * immutable contextual objects database, map with parameters and map with path variables
+ *
  * @see ObjectsDatabase
- * */
+ * @author Max Savitsky
+ */
 public class RequestContext {
 
 	private String methodDeclarationPath;
@@ -18,6 +20,12 @@ public class RequestContext {
 	private Map<String, Object> parameters;
 	private Map<String, String> pathVariables;
 
+	/**
+	 * Method declaration path is concatenation of containing class name (with package), sharp symbol and method name.
+	 * For example, {@code package.Sample#method}
+	 *
+	 * @return method declaration path
+	 */
 	public String getMethodDeclarationPath() {
 		return methodDeclarationPath;
 	}
@@ -27,6 +35,9 @@ public class RequestContext {
 		return this;
 	}
 
+	/**
+	 * @return full method mapping (controller mapping + path separator + method mapping)
+	 */
 	public String getMethodMapping() {
 		return methodMapping;
 	}
@@ -36,6 +47,10 @@ public class RequestContext {
 		return this;
 	}
 
+	/**
+	 * @return immutable global objects database
+	 * @see ObjectsDatabase
+	 */
 	public ObjectsDatabase getObjectsDatabase() {
 		return objectsDatabase;
 	}
@@ -45,6 +60,10 @@ public class RequestContext {
 		return this;
 	}
 
+	/**
+	 * @return immutable contextual objects database
+	 * @see ObjectsDatabase
+	 */
 	public ObjectsDatabase getContextualObjectsDatabase() {
 		return contextualObjectsDatabase;
 	}
@@ -54,6 +73,9 @@ public class RequestContext {
 		return this;
 	}
 
+	/**
+	 * @return map with request parameters
+	 */
 	public Map<String, Object> getParameters() {
 		return parameters;
 	}
@@ -63,6 +85,10 @@ public class RequestContext {
 		return this;
 	}
 
+	/**
+	 * @return map with resolved path variables
+	 * @see <a href="https://ciconia.maxsavteam.com/docs/#/components/controllers?id=path-variables">Path variables documentation</a>
+	 */
 	public Map<String, String> getPathVariables() {
 		return pathVariables;
 	}
