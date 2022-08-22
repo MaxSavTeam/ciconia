@@ -94,7 +94,7 @@ public class CiconiaHandler {
 		ObjectsDatabase contextualDatabase = executionContext.getContextualDatabase();
 
 		RequestContext context = new RequestContext()
-				.setComponentsDatabase(objectsDatabase.immutable())
+				.setObjectsDatabase(objectsDatabase.immutable())
 				.setContextualObjectsDatabase(contextualDatabase.immutable())
 				.setParameters(Collections.unmodifiableMap(params.toMap()))
 				.setPathVariables(Collections.unmodifiableMap(pathVariablesMap))

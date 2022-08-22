@@ -13,7 +13,7 @@ public class RequestContext {
 
 	private String methodPath;
 	private String methodMapping;
-	private ObjectsDatabase componentsDatabase;
+	private ObjectsDatabase objectsDatabase;
 	private ObjectsDatabase contextualObjectsDatabase;
 	private Map<String, Object> parameters;
 	private Map<String, String> pathVariables;
@@ -36,12 +36,12 @@ public class RequestContext {
 		return this;
 	}
 
-	public ObjectsDatabase getComponentsDatabase() {
-		return componentsDatabase;
+	public ObjectsDatabase getObjectsDatabase() {
+		return objectsDatabase;
 	}
 
-	public RequestContext setComponentsDatabase(ObjectsDatabase componentsDatabase) {
-		this.componentsDatabase = componentsDatabase;
+	public RequestContext setObjectsDatabase(ObjectsDatabase objectsDatabase) {
+		this.objectsDatabase = objectsDatabase;
 		return this;
 	}
 
