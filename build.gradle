@@ -18,9 +18,6 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
     implementation 'org.slf4j:slf4j-simple:1.7.36'
-
-    // https://mvnrepository.com/artifact/org.json/json
-    implementation 'org.json:json:20220320'
 }
 
 test {

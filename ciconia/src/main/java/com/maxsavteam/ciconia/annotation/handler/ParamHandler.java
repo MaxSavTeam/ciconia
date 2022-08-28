@@ -5,9 +5,9 @@ import com.maxsavteam.ciconia.annotation.ValueConstants;
 import com.maxsavteam.ciconia.converter.Converter;
 import com.maxsavteam.ciconia.exception.IncompatibleClassException;
 import com.maxsavteam.ciconia.exception.ParameterNotPresentException;
+import org.json.JSONObject;
 
 import java.lang.annotation.Annotation;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -22,10 +22,10 @@ public class ParamHandler implements ParameterAnnotationHandler {
 	}
 
 	@Override
-	public Optional<Object> handle(Annotation annotation, Class<?> parameterType, RequestContext context) {
+	public Optional<Object> handle(Annotation annotation, Class<?> parameterType, Converter converter, RequestContext context) {
 		Param param = (Param) annotation;
-		Map<String, Object> parameters = context.getParameters();
-		Object paramObject = parameters.getOrDefault(param.value(), null);
+		JSONObject parameters = context.getParametersJsonObject();
+		Object paramObject = parameters.opt(param.value());
 		if (paramObject == null) {
 			if (param.required()) {
 				throw new ParameterNotPresentException(
@@ -42,7 +42,7 @@ public class ParamHandler implements ParameterAnnotationHandler {
 		}
 		if(paramObject == null)
 			return Optional.of(NULL_VALUE);
-		Optional<Object> op = Converter.convertToParameterType(paramObject, parameterType);
+		Optional<Object> op = converter.convertToParameterType(paramObject);
 		if(op.isPresent())
 			return op;
 		throw new IncompatibleClassException(

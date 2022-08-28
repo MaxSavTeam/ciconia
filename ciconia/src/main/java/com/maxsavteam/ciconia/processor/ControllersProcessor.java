@@ -10,6 +10,7 @@ import com.maxsavteam.ciconia.component.MappingWrapper;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +54,7 @@ public class ControllersProcessor {
 
 		Annotation[][] parameterAnnotations = method.getParameterAnnotations();
 		Class<?>[] parameterTypes = method.getParameterTypes();
+		Type[] genericParameterTypes = method.getGenericParameterTypes();
 		ArrayList<ExecutableMethod.Argument> arguments = new ArrayList<>();
 		for(int i = 0; i < parameterTypes.length; i++){
 			Annotation[] annotations = parameterAnnotations[i];
@@ -64,7 +66,8 @@ public class ControllersProcessor {
 			}
 
 			Class<?> parameterType = parameterTypes[i];
-			ExecutableMethod.Argument argument = new ExecutableMethod.Argument(parameterType, parameterAnnotationsList);
+			Type parameterGenericType = genericParameterTypes[i];
+			ExecutableMethod.Argument argument = new ExecutableMethod.Argument(parameterType, parameterGenericType, parameterAnnotationsList);
 			arguments.add(argument);
 		}
 

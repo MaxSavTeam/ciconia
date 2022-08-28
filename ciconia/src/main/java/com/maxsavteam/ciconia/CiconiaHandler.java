@@ -8,6 +8,7 @@ import com.maxsavteam.ciconia.annotation.handler.PathVariableHandler;
 import com.maxsavteam.ciconia.component.Controller;
 import com.maxsavteam.ciconia.component.ExecutableMethod;
 import com.maxsavteam.ciconia.component.ObjectsDatabase;
+import com.maxsavteam.ciconia.converter.Converter;
 import com.maxsavteam.ciconia.exception.ExecutionException;
 import com.maxsavteam.ciconia.exception.MethodNotFoundException;
 import org.json.JSONObject;
@@ -114,6 +115,7 @@ public class CiconiaHandler {
 				.setObjectsDatabase(objectsDatabase.immutable())
 				.setContextualObjectsDatabase(contextualDatabase.immutable())
 				.setParameters(Collections.unmodifiableMap(params.toMap()))
+				.setParametersJsonObject(params) // TODO: 29.08.2022 make json object unmodifiable
 				.setPathVariables(Collections.unmodifiableMap(pathVariablesMap))
 				.setMethodDeclarationPath(controller.getaClass().getName() + "#" + method.getMethod().getName())
 				.setMethodMapping(controller.getMappingName() + configuration.getPathSeparator() + method.getMappingWrapper().getMappingName());
@@ -123,12 +125,13 @@ public class CiconiaHandler {
 		for (int i = 0; i < arguments.size(); i++) {
 			ExecutableMethod.Argument argument = arguments.get(i);
 			List<Annotation> annotations = argument.getAnnotations();
+			Converter converter = new Converter(argument.getParameterGenericType(), argument.getParameterClass());
 			boolean found = false;
 			for(Annotation annotation : annotations){
 				ParameterAnnotationHandler handler = getHandler(annotation);
 				if(handler == null)
 					continue;
-				Optional<Object> op = handler.handle(annotation, argument.getArgumentType(), context);
+				Optional<Object> op = handler.handle(annotation, argument.getParameterClass(), converter, context);
 				if(op.isPresent()){
 					found = true;
 					Object obj = op.get();
@@ -140,7 +143,7 @@ public class CiconiaHandler {
 				}
 			}
 			if(!found) {
-				Class<?> argumentType = argument.getArgumentType();
+				Class<?> argumentType = argument.getParameterClass();
 				Optional<?> op = objectsDatabase.findObject(argumentType);
 				if(op.isPresent())
 					methodArguments[i] = op.get();

@@ -2,6 +2,7 @@ package com.maxsavteam.ciconia.component;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.List;
 
 /**
@@ -34,22 +35,28 @@ public class ExecutableMethod {
 
 	public static class Argument {
 
-		private final Class<?> argumentType;
+		private final Class<?> parameterClass;
+		private final Type parameterGenericType;
 
 		// list contains only annotations that are annotated with ParameterAnnotation
 		private final List<Annotation> annotations;
 
-		public Argument(Class<?> argumentType, List<Annotation> annotations) {
-			this.argumentType = argumentType;
+		public Argument(Class<?> parameterClass, Type parameterGenericType, List<Annotation> annotations) {
+			this.parameterClass = parameterClass;
+			this.parameterGenericType = parameterGenericType;
 			this.annotations = annotations;
 		}
 
-		public Class<?> getArgumentType() {
-			return argumentType;
+		public Class<?> getParameterClass() {
+			return parameterClass;
 		}
 
 		public List<Annotation> getAnnotations() {
 			return annotations;
+		}
+
+		public Type getParameterGenericType() {
+			return parameterGenericType;
 		}
 	}
 

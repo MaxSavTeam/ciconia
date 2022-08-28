@@ -1,6 +1,7 @@
 package com.maxsavteam.ciconia.annotation.handler;
 
 import com.maxsavteam.ciconia.component.ObjectsDatabase;
+import org.json.JSONObject;
 
 import java.util.Map;
 
@@ -18,6 +19,7 @@ public class RequestContext {
 	private ObjectsDatabase objectsDatabase;
 	private ObjectsDatabase contextualObjectsDatabase;
 	private Map<String, Object> parameters;
+	private JSONObject parametersJsonObject;
 	private Map<String, String> pathVariables;
 
 	/**
@@ -82,6 +84,18 @@ public class RequestContext {
 
 	public RequestContext setParameters(Map<String, Object> parameters) {
 		this.parameters = parameters;
+		return this;
+	}
+
+	/**
+	 * @return JSON object with request parameters
+	 * */
+	public JSONObject getParametersJsonObject() {
+		return parametersJsonObject;
+	}
+
+	public RequestContext setParametersJsonObject(JSONObject parametersJsonObject) {
+		this.parametersJsonObject = parametersJsonObject;
 		return this;
 	}
 

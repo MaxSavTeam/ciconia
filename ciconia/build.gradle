@@ -39,9 +39,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.3'
 
     // https://mvnrepository.com/artifact/org.json/json
-    implementation 'org.json:json:20220320'
-
-    implementation 'net.jodah:typetools:0.6.3'
+    api 'org.json:json:20220320'
 
 }
 

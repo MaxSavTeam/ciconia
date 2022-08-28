@@ -20,7 +20,7 @@ public class PathVariableHandler implements ParameterAnnotationHandler {
 	}
 
 	@Override
-	public Optional<Object> handle(Annotation annotation, Class<?> parameterType, RequestContext context) {
+	public Optional<Object> handle(Annotation annotation, Class<?> parameterType, Converter converter, RequestContext context) {
 		PathVariable pathVariable = (PathVariable) annotation;
 		String variableName = pathVariable.value();
 		if(!context.getPathVariables().containsKey(variableName)) {
@@ -33,7 +33,7 @@ public class PathVariableHandler implements ParameterAnnotationHandler {
 			);
 		}
 		String variableValue = context.getPathVariables().get(variableName);
-		Optional<Object> op = Converter.convertToParameterType(variableValue, parameterType);
+		Optional<Object> op = converter.convertToParameterType(variableValue);
 		if(op.isPresent())
 			return op;
 		throw new IncompatibleClassException(

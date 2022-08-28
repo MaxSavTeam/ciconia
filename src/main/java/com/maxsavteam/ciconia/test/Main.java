@@ -23,19 +23,29 @@ public class Main {
 		CiconiaApplication.run(Main.class, configuration);
 		Object result = CiconiaHandler.getInstance().handle(
 				new JSONObject()
-						.put("method", "test/")
+						.put("method", "test/list")
 						.put("params", new JSONObject()
-								.put("list", new JSONArray().put("hello").put("world"))
+								.put("list", new JSONArray().put("1").put("2"))
+								.put("json", new JSONObject().put("name", "Max"))
 								.put("x", "Oleg")
 						),
-				RequestMethod.POST
+				RequestMethod.GET
 		);
 		System.out.println();
 		System.out.println(result);
 	}
 
-	@Mapping("test")
-	public void helloWorld(@Param("list") List<String> list){
+	public static class Test {
+		public String name;
+	}
+
+	@Mapping("jackson")
+	public void test(@Param("json") Test test){
+		System.out.println(test.name);
+	}
+
+	@Mapping("list")
+	public void helloWorld(@Param("list") List<Double> list){
 		for(var i : list)
 			System.out.println(i);
 	}
