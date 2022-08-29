@@ -18,6 +18,9 @@ import java.util.Optional;
  * */
 public class Converter {
 
+	/**
+	 * Using to indicate, that {@link #convertToParameterType(Object)} returns {@code null} value.
+	 * */
 	public static final Object NULL_VALUE = new Object();
 
 	private final Type type;
@@ -28,6 +31,11 @@ public class Converter {
 		this.clazz = clazz;
 	}
 
+	/**
+	 * Converts given object to specified type.
+	 * @param param object to convert
+	 * @return {@link Optional} with converted object or {@link Optional#empty()} if conversion is not possible
+	 * */
 	public Optional<Object> convertToParameterType(Object param){
 		if(param == null)
 			return Optional.of(NULL_VALUE);

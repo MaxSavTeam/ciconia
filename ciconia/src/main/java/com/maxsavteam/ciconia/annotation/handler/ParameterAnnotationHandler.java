@@ -29,6 +29,8 @@ public interface ParameterAnnotationHandler {
 	 * @param converter  Converter to convert parameter value to required type.
 	 * @param context    Context of invocation.
 	 * @return parameter value in Optional.
+	 * @see Converter
+	 * @see RequestContext
 	 */
 	Optional<Object> handle(Annotation annotation, Converter converter, RequestContext context);
 
