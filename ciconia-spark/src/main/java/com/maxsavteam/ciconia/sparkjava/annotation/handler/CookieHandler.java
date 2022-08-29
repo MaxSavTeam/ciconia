@@ -3,6 +3,7 @@ package com.maxsavteam.ciconia.sparkjava.annotation.handler;
 import com.maxsavteam.ciconia.annotation.handler.RequestContext;
 import com.maxsavteam.ciconia.annotation.handler.ParameterAnnotationHandler;
 import com.maxsavteam.ciconia.converter.Converter;
+import com.maxsavteam.ciconia.exception.IncompatibleClassException;
 import com.maxsavteam.ciconia.sparkjava.annotation.Cookie;
 import spark.Request;
 
@@ -24,6 +25,15 @@ public class CookieHandler implements ParameterAnnotationHandler {
 		String cookieValue = request.cookie(cookieName);
 		if(cookieValue == null)
 			return Optional.of(NULL_VALUE);
-		return Optional.of(cookieValue);
+		Optional<Object> op = converter.convertToParameterType(cookieValue);
+		if(op.isPresent())
+			return op;
+		throw new IncompatibleClassException(
+				String.format(
+						"Cookie \"%s\" cannot be converted to declared type %s",
+						cookieName,
+						converter.getParameterClass().getName()
+				)
+		);
 	}
 }
