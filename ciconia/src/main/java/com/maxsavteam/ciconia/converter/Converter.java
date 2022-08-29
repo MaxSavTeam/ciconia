@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Attempts to convert object to specific type.
+ * Object converter to specific type.
  * @author Max Savitsky
  * */
 public class Converter {
@@ -93,4 +93,17 @@ public class Converter {
 		return Optional.empty();
 	}
 
+	/**
+	 * @return type of parameter which this converter associated with.
+	 * */
+	public Type getParameterType() {
+		return type;
+	}
+
+	/**
+	 * @return class of parameter which this converter associated with.
+	 * */
+	public Class<?> getParameterClass() {
+		return clazz;
+	}
 }

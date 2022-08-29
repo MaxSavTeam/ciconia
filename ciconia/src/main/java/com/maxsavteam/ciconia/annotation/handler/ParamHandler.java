@@ -22,7 +22,7 @@ public class ParamHandler implements ParameterAnnotationHandler {
 	}
 
 	@Override
-	public Optional<Object> handle(Annotation annotation, Class<?> parameterType, Converter converter, RequestContext context) {
+	public Optional<Object> handle(Annotation annotation, Converter converter, RequestContext context) {
 		Param param = (Param) annotation;
 		JSONObject parameters = context.getParametersJsonObject();
 		Object paramObject = parameters.opt(param.value());
@@ -49,7 +49,7 @@ public class ParamHandler implements ParameterAnnotationHandler {
 				String.format(
 						"Parameter \"%s\" cannot be converted to declared type %s",
 						param.value(),
-						parameterType.getName()
+						converter.getParameterClass().getName()
 				)
 		);
 	}

@@ -17,7 +17,7 @@ public class HeaderHandler implements ParameterAnnotationHandler {
 	}
 
 	@Override
-	public Optional<Object> handle(Annotation annotation, Class<?> parameterType, Converter converter, RequestContext context) {
+	public Optional<Object> handle(Annotation annotation, Converter converter, RequestContext context) {
 		Header header = (Header) annotation;
 		String headerName = header.value();
 		Request request = Utils.getRequest(context.getContextualObjectsDatabase());

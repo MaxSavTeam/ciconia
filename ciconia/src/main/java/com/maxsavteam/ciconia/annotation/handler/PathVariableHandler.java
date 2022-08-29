@@ -20,7 +20,7 @@ public class PathVariableHandler implements ParameterAnnotationHandler {
 	}
 
 	@Override
-	public Optional<Object> handle(Annotation annotation, Class<?> parameterType, Converter converter, RequestContext context) {
+	public Optional<Object> handle(Annotation annotation, Converter converter, RequestContext context) {
 		PathVariable pathVariable = (PathVariable) annotation;
 		String variableName = pathVariable.value();
 		if(!context.getPathVariables().containsKey(variableName)) {
@@ -40,7 +40,7 @@ public class PathVariableHandler implements ParameterAnnotationHandler {
 				String.format(
 						"Path variable \"%s\" cannot be converted to declared type %s",
 						pathVariable.value(),
-						parameterType.getName()
+						converter.getParameterClass().getName()
 				)
 		);
 	}

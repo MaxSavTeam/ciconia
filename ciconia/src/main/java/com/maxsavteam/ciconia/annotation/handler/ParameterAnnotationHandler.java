@@ -26,10 +26,10 @@ public interface ParameterAnnotationHandler {
 	 * To return {@code null} use {@code Optional.of(NULL_VALUE)}.
 	 *
 	 * @param annotation Annotation that parameter is annotated with.
-	 * @param parameterType Type of parameter.
-	 * @param context Context of invocation.
+	 * @param converter  Converter to convert parameter value to required type.
+	 * @param context    Context of invocation.
 	 * @return parameter value in Optional.
-	 * */
-	Optional<Object> handle(Annotation annotation, Class<?> parameterType, Converter converter, RequestContext context);
+	 */
+	Optional<Object> handle(Annotation annotation, Converter converter, RequestContext context);
 
 }

@@ -17,7 +17,7 @@ public class CookieHandler implements ParameterAnnotationHandler {
 	}
 
 	@Override
-	public Optional<Object> handle(Annotation annotation, Class<?> parameterType, Converter converter, RequestContext context) {
+	public Optional<Object> handle(Annotation annotation, Converter converter, RequestContext context) {
 		Cookie cookie = (Cookie) annotation;
 		Request request = Utils.getRequest(context.getContextualObjectsDatabase());
 		String cookieName = cookie.value();
