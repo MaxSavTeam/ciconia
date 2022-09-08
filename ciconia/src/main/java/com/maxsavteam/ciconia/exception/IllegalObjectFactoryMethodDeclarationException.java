@@ -1,6 +1,6 @@
 package com.maxsavteam.ciconia.exception;
 
-public class IllegalObjectFactoryMethodDeclarationException extends CiconiaRuntimeException{
+public class IllegalObjectFactoryMethodDeclarationException extends IllegalMethodDeclaration{
 
 	public IllegalObjectFactoryMethodDeclarationException() {
 	}

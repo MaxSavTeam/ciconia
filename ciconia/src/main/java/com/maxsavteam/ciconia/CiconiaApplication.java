@@ -8,7 +8,9 @@ import com.maxsavteam.ciconia.component.Controller;
 import com.maxsavteam.ciconia.component.ExecutableMethod;
 import com.maxsavteam.ciconia.component.InstantiatableObject;
 import com.maxsavteam.ciconia.component.ObjectsDatabase;
+import com.maxsavteam.ciconia.component.PostInitializationMethod;
 import com.maxsavteam.ciconia.exception.DuplicateMappingException;
+import com.maxsavteam.ciconia.exception.ExecutionException;
 import com.maxsavteam.ciconia.exception.InstantiationException;
 import com.maxsavteam.ciconia.graph.ObjectsDependenciesGraph;
 import com.maxsavteam.ciconia.parser.ComponentsParser;
@@ -19,6 +21,7 @@ import com.maxsavteam.ciconia.processor.ControllersProcessor;
 import com.maxsavteam.ciconia.utils.CiconiaUtils;
 import com.maxsavteam.ciconia.utils.Pair;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -77,6 +80,20 @@ public class CiconiaApplication {
 		if(configuration.isHandlerEnabled()) {
 			MappingsContainer container = new MappingsContainer(controllers, configuration);
 			CiconiaHandler.initialize(container, objectsDatabase, configuration);
+		}
+
+		try {
+			processPostInitializationMethods(configurers, objectsDatabase);
+		} catch (InvocationTargetException | IllegalAccessException e) {
+			throw new ExecutionException(e);
+		}
+	}
+
+	private void processPostInitializationMethods(List<Configurer> configurers, ObjectsDatabase objectsDatabase) throws InvocationTargetException, IllegalAccessException {
+		for(Configurer configurer : configurers){
+			for(PostInitializationMethod method : configurer.getPostInitializationMethods()){
+				method.invoke(objectsDatabase);
+			}
 		}
 	}
 

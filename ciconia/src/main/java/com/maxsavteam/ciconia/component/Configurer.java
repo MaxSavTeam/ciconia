@@ -10,10 +10,12 @@ import java.util.List;
 public class Configurer extends InstantiatableComponent {
 
 	private final List<ObjectFactoryMethod> methods;
+	private final List<PostInitializationMethod> postInitializationMethods;
 
-	public Configurer(Class<?> aClass, List<ObjectFactoryMethod> methods) {
+	public Configurer(Class<?> aClass, List<ObjectFactoryMethod> methods, List<PostInitializationMethod> postInitializationMethods) {
 		super(aClass);
 		this.methods = methods;
+		this.postInitializationMethods = postInitializationMethods;
 	}
 
 	/**
@@ -23,6 +25,15 @@ public class Configurer extends InstantiatableComponent {
 	 * */
 	public List<ObjectFactoryMethod> getMethods() {
 		return methods;
+	}
+
+	/**
+	 * @return list of post initialization methods
+	 * @see com.maxsavteam.ciconia.annotation.PostInitialization
+	 * @see PostInitializationMethod
+	 * */
+	public List<PostInitializationMethod> getPostInitializationMethods() {
+		return postInitializationMethods;
 	}
 
 }
