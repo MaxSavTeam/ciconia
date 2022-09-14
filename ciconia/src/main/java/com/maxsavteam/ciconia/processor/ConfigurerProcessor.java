@@ -75,7 +75,9 @@ public class ConfigurerProcessor {
 		if (!method.trySetAccessible())
 			throw new MethodNotAccessibleException("Method is not accessible: " + CiconiaUtils.getMethodDeclarationString(method));
 
-		return new PostInitializationMethod(method);
+		PostInitialization annotation = method.getAnnotation(PostInitialization.class);
+
+		return new PostInitializationMethod(method, annotation.order());
 	}
 
 }

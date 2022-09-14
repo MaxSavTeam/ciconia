@@ -13,13 +13,19 @@ import java.util.Optional;
 public class PostInitializationMethod {
 
 	private final Method method;
+	private final int order;
 
-	public PostInitializationMethod(Method method) {
+	public PostInitializationMethod(Method method, int order) {
 		this.method = method;
+		this.order = order;
 	}
 
 	public Method getMethod() {
 		return method;
+	}
+
+	public int getOrder() {
+		return order;
 	}
 
 	public void invoke(ObjectsDatabase objectsDatabase) throws InvocationTargetException, IllegalAccessException {

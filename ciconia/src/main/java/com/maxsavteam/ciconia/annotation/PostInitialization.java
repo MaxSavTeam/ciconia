@@ -12,4 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface PostInitialization {
+
+	int order() default 0;
+
 }

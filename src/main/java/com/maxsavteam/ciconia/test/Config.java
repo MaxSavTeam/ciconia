@@ -19,4 +19,14 @@ public class Config {
 		System.out.println("Post initialization");
 	}
 
+	@PostInitialization(order = 1)
+	public void postInitialization1(){
+		System.out.println("Post initialization 1");
+	}
+
+	@PostInitialization(order = 2)
+	public void postInitialization2(){
+		System.out.println("Post initialization 2");
+	}
+
 }

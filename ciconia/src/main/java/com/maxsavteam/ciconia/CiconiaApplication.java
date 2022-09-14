@@ -23,6 +23,7 @@ import com.maxsavteam.ciconia.utils.Pair;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,10 +91,15 @@ public class CiconiaApplication {
 	}
 
 	private void processPostInitializationMethods(List<Configurer> configurers, ObjectsDatabase objectsDatabase) throws InvocationTargetException, IllegalAccessException {
+		List<PostInitializationMethod> methods = new ArrayList<>();
 		for(Configurer configurer : configurers){
-			for(PostInitializationMethod method : configurer.getPostInitializationMethods()){
-				method.invoke(objectsDatabase);
-			}
+			methods.addAll(configurer.getPostInitializationMethods());
+		}
+
+		methods.sort(Comparator.comparingInt(PostInitializationMethod::getOrder));
+
+		for(PostInitializationMethod method : methods){
+			method.invoke(objectsDatabase);
 		}
 	}
 
