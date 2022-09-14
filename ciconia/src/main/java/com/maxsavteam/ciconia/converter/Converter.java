@@ -92,7 +92,7 @@ public class Converter {
 			List<?> paramList = (List<?>) param;
 			for (Object item : paramList) {
 				Optional<Object> result = converter.convertToParameterType(item);
-				if (result.isEmpty())
+				if (!result.isPresent())
 					return Optional.empty();
 				list.add(result.get());
 			}

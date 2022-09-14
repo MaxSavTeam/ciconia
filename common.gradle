@@ -1,6 +1,6 @@
 repositories.ext.mstRepo = {
     repositories.maven {
-        url 'https://repo.maxsavteam.com'
+        url 'https://repo.maxsavteam.com/releases'
     }
 }
 

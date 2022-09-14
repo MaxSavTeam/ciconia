@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,7 +76,7 @@ public class ControllersProcessor {
 		if(mappingName.startsWith(String.valueOf(configuration.getPathSeparator())))
 			mappingName = mappingName.substring(1);
 
-		MappingWrapper mappingWrapper = new MappingWrapper(mappingName, List.of(mapping.method()), configuration);
+		MappingWrapper mappingWrapper = new MappingWrapper(mappingName, Arrays.asList(mapping.method()), configuration);
 		return Optional.of(new ExecutableMethod(method, mappingWrapper, arguments));
 	}
 

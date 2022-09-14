@@ -52,7 +52,7 @@ public class ObjectFactoryMethod extends InstantiatableObject {
 	public InstantiatableObjectFactory getFactory() {
 		return database -> {
 			Optional<?> op = database.findObject(method.getDeclaringClass());
-			if (op.isEmpty()) {
+			if (!op.isPresent()) {
 				throw new InstantiationException(
 						"Could not find object required for object factory method execution: "
 								+ CiconiaUtils.getMethodDeclarationString(method)
@@ -62,7 +62,7 @@ public class ObjectFactoryMethod extends InstantiatableObject {
 			Object[] parameters = new Object[this.parameters.size()];
 			for (int i = 0; i < parameters.length; i++) {
 				op = database.findObject(this.parameters.get(i));
-				if (op.isEmpty()) {
+				if (!op.isPresent()) {
 					throw new InstantiationException(
 							String.format(
 									"Parameter %d in %s require object of type %s that could not be found",

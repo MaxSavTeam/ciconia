@@ -11,7 +11,7 @@ class Utils {
 
 	public static Request getRequest(ObjectsDatabase contextualDatabase){
 		Optional<Request> op = contextualDatabase.findObject(Request.class);
-		if(op.isEmpty())
+		if(!op.isPresent())
 			throw new IllegalStateException("No request found in context");
 		return op.get();
 	}

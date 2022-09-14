@@ -17,6 +17,7 @@ import javax.annotation.Nonnull;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ public class CiconiaHandler {
 		return instance;
 	}
 
-	private static final List<ParameterAnnotationHandler> defaultHandlers = List.of(
+	private static final List<ParameterAnnotationHandler> defaultHandlers = Arrays.asList(
 			new ParamHandler(),
 			new PathVariableHandler()
 	);

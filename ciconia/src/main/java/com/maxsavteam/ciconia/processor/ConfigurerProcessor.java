@@ -59,7 +59,7 @@ public class ConfigurerProcessor {
 		Class<?> returnType = method.getReturnType();
 		if (returnType == Void.TYPE || returnType.isPrimitive())
 			throw new IllegalObjectFactoryMethodDeclarationException("Method should not return void or primitive type");
-		if (!method.trySetAccessible())
+		if (!method.isAccessible())
 			throw new MethodNotAccessibleException("Method is not accessible: " + CiconiaUtils.getMethodDeclarationString(method));
 
 		return new ObjectFactoryMethod(method);
@@ -72,7 +72,7 @@ public class ConfigurerProcessor {
 		if(!Modifier.isPublic(modifiers))
 			throw new IllegalPostInitializationMethodDeclaration("Post initialization method must be public");
 
-		if (!method.trySetAccessible())
+		if (!method.isAccessible())
 			throw new MethodNotAccessibleException("Method is not accessible: " + CiconiaUtils.getMethodDeclarationString(method));
 
 		PostInitialization annotation = method.getAnnotation(PostInitialization.class);

@@ -10,9 +10,7 @@ version libVersion
 
 repositories {
     mavenCentral()
-    maven {
-        url 'https://repo.maxsavteam.com'
-    }
+    mstRepo()
 }
 
 jar {
@@ -29,7 +27,7 @@ dependencies {
 
     implementation 'org.reflections:reflections:0.10.2'
 
-    implementation 'com.maxsavteam.graph:graph:0.1.0'
+    implementation 'com.maxsavteam.graph:graph:0.2.0'
 
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
     implementation 'com.fasterxml.jackson.core:jackson-core:2.13.3'
@@ -48,8 +46,8 @@ test {
 }
 
 java {
-    sourceCompatibility JavaVersion.VERSION_11
-    targetCompatibility JavaVersion.VERSION_11
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
 }
 
 mstPublishing('ciconia')

@@ -36,7 +36,7 @@ public class PostInitializationMethod {
 					.orElse(null);
 		}
 		Optional<?> parent = objectsDatabase.findObject(method.getDeclaringClass());
-		if(parent.isEmpty())
+		if(!parent.isPresent())
 			throw new IllegalStateException("Could not find parent object for post initialization method: " + CiconiaUtils.getMethodDeclarationString(method));
 		method.invoke(parent.get(), arguments);
 	}

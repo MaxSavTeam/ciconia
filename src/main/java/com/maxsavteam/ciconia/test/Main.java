@@ -46,7 +46,7 @@ public class Main {
 
 	@Mapping("list")
 	public void helloWorld(@Param("list") List<Double> list){
-		for(var i : list)
+		for(Double i : list)
 			System.out.println(i);
 	}
 
