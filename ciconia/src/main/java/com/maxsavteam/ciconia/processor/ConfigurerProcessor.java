@@ -8,8 +8,6 @@ import com.maxsavteam.ciconia.component.PostInitializationMethod;
 import com.maxsavteam.ciconia.exception.IllegalObjectFactoryMethodDeclarationException;
 import com.maxsavteam.ciconia.exception.IllegalPostInitializationMethodDeclaration;
 import com.maxsavteam.ciconia.exception.InvalidConfigurationDeclarationException;
-import com.maxsavteam.ciconia.exception.MethodNotAccessibleException;
-import com.maxsavteam.ciconia.utils.CiconiaUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -59,8 +57,6 @@ public class ConfigurerProcessor {
 		Class<?> returnType = method.getReturnType();
 		if (returnType == Void.TYPE || returnType.isPrimitive())
 			throw new IllegalObjectFactoryMethodDeclarationException("Method should not return void or primitive type");
-		if (!method.isAccessible())
-			throw new MethodNotAccessibleException("Method is not accessible: " + CiconiaUtils.getMethodDeclarationString(method));
 
 		return new ObjectFactoryMethod(method);
 	}
@@ -71,9 +67,6 @@ public class ConfigurerProcessor {
 			throw new IllegalPostInitializationMethodDeclaration("Post initialization method cannot be static");
 		if(!Modifier.isPublic(modifiers))
 			throw new IllegalPostInitializationMethodDeclaration("Post initialization method must be public");
-
-		if (!method.isAccessible())
-			throw new MethodNotAccessibleException("Method is not accessible: " + CiconiaUtils.getMethodDeclarationString(method));
 
 		PostInitialization annotation = method.getAnnotation(PostInitialization.class);
 
