@@ -7,7 +7,7 @@ import java.util.List;
  * @see com.maxsavteam.ciconia.annotation.Configuration
  * @author Max Savitsky
  * */
-public class Configurer extends InstantiatableComponent {
+public class Configurer extends Component {
 
 	private final List<ObjectFactoryMethod> methods;
 	private final List<PostInitializationMethod> postInitializationMethods;

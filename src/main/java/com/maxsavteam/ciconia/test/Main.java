@@ -4,17 +4,25 @@ import com.maxsavteam.ciconia.CiconiaApplication;
 import com.maxsavteam.ciconia.CiconiaConfiguration;
 import com.maxsavteam.ciconia.CiconiaHandler;
 import com.maxsavteam.ciconia.annotation.Component;
+import com.maxsavteam.ciconia.annotation.Cron;
 import com.maxsavteam.ciconia.annotation.Mapping;
 import com.maxsavteam.ciconia.annotation.Param;
 import com.maxsavteam.ciconia.annotation.RequestMethod;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Component
 @Mapping("test")
 public class Main {
+
+	@Cron("*/5 * * * * ?")
+	public void cronTest(){
+		System.out.println("Cron test: " + new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(new Date()));
+	}
 
 	public static void main(String[] args) {
 		CiconiaConfiguration configuration = new CiconiaConfiguration.Builder()

@@ -2,8 +2,10 @@ package com.maxsavteam.ciconia.utils;
 
 import com.maxsavteam.ciconia.component.InstantiatableObject;
 import com.maxsavteam.ciconia.component.ObjectFactoryMethod;
+import com.maxsavteam.ciconia.exception.IllegalMethodDeclaration;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,4 +47,25 @@ public class CiconiaUtils {
 		}
 		return sb.toString();
 	}
+
+	public static void checkMethodDeclaration(Method method, Class<? extends IllegalMethodDeclaration> exceptionClass){
+		int modifiers = method.getModifiers();
+		if(!Modifier.isPublic(modifiers))
+			throw getExceptionInstance(exceptionClass, "Method should be public");
+		if(Modifier.isStatic(modifiers))
+			throw getExceptionInstance(exceptionClass, "Method should not be static");
+		if(Modifier.isAbstract(modifiers))
+			throw getExceptionInstance(exceptionClass, "Method should not be abstract");
+		if(Modifier.isNative(modifiers))
+			throw getExceptionInstance(exceptionClass, "Method should not be native");
+	}
+
+	private static <T extends IllegalMethodDeclaration> T getExceptionInstance(Class<T> exceptionClass, String message){
+		try {
+			return exceptionClass.getConstructor(String.class).newInstance(message);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 }

@@ -9,6 +9,7 @@ import com.maxsavteam.ciconia.component.ExecutableMethod;
 import com.maxsavteam.ciconia.component.InstantiatableObject;
 import com.maxsavteam.ciconia.component.ObjectsDatabase;
 import com.maxsavteam.ciconia.component.PostInitializationMethod;
+import com.maxsavteam.ciconia.exception.CiconiaInitializationException;
 import com.maxsavteam.ciconia.exception.DuplicateMappingException;
 import com.maxsavteam.ciconia.exception.ExecutionException;
 import com.maxsavteam.ciconia.exception.InstantiationException;
@@ -20,6 +21,7 @@ import com.maxsavteam.ciconia.processor.ConfigurerProcessor;
 import com.maxsavteam.ciconia.processor.ControllersProcessor;
 import com.maxsavteam.ciconia.utils.CiconiaUtils;
 import com.maxsavteam.ciconia.utils.Pair;
+import org.quartz.SchedulerException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -32,8 +34,12 @@ import java.util.stream.Collectors;
 
 public class CiconiaApplication {
 
+	private static CiconiaApplication instance;
+
 	private final Class<?> primarySource;
 	private final CiconiaConfiguration configuration;
+
+	private CronScheduler cronScheduler;
 
 	private CiconiaApplication(Class<?> primarySource, CiconiaConfiguration configuration) {
 		this.primarySource = primarySource;
@@ -41,27 +47,27 @@ public class CiconiaApplication {
 	}
 
 	private void run() {
-		List<Component> components = getComponents();
-		List<Controller> controllers = getControllers(components);
+		List<Component> components = getComponents(); // components + controllers
+		List<Controller> controllers = getControllers(components); // controllers only
 
 		requireNoDuplicateMappings(controllers);
 
-		List<InstantiatableObject> instantiatableObjects = components
+		List<Configurer> configurers = getConfigurers();
+
+		List<Component> allComponents = new ArrayList<>(components);
+		for(Configurer configurer : configurers){
+			if(allComponents.stream().noneMatch(c -> c.getaClass().equals(configurer.getaClass())))
+				allComponents.add(configurer);
+		}
+
+		new ComponentsProcessor().setup(allComponents);
+
+		List<InstantiatableObject> instantiatableObjects = allComponents
 				.stream()
 				.map(component -> (InstantiatableObject) component)
 				.collect(Collectors.toList());
 
-		List<Configurer> configurers = getConfigurers();
 		for(Configurer configurer : configurers){
-			boolean isThisClassAlreadyIncluded = false;
-			for(InstantiatableObject instantiatableObject : instantiatableObjects){
-				if(instantiatableObject.getaClass().equals(configurer.getaClass())){
-					isThisClassAlreadyIncluded = true;
-					break;
-				}
-			}
-			if(!isThisClassAlreadyIncluded)
-				instantiatableObjects.add(configurer);
 			instantiatableObjects.addAll(configurer.getMethods());
 		}
 
@@ -84,9 +90,24 @@ public class CiconiaApplication {
 		}
 
 		try {
+			scheduleCronMethods(allComponents, objectsDatabase);
+		} catch (SchedulerException e) {
+			throw new CiconiaInitializationException(e);
+		}
+
+		try {
 			processPostInitializationMethods(configurers, objectsDatabase);
 		} catch (InvocationTargetException | IllegalAccessException e) {
 			throw new ExecutionException(e);
+		}
+	}
+
+	private void scheduleCronMethods(List<Component> components, ObjectsDatabase objectsDatabase) throws SchedulerException {
+		cronScheduler = new CronScheduler(objectsDatabase);
+		for(Component component : components){
+			for(Component.CronMethod cronMethod : component.getCronMethods()){
+				cronScheduler.scheduleCronMethod(component, cronMethod);
+			}
 		}
 	}
 
@@ -171,6 +192,14 @@ public class CiconiaApplication {
 		}
 	}
 
+	private void stopApplication(){
+		try {
+			cronScheduler.shutdown();
+		} catch (SchedulerException e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * Starts Ciconia
 	 *
@@ -187,7 +216,20 @@ public class CiconiaApplication {
 	 * @param configuration Ciconia configuration
 	 * */
 	public static void run(Class<?> source, CiconiaConfiguration configuration) {
-		new CiconiaApplication(source, configuration).run();
+		if(instance != null)
+			throw new CiconiaInitializationException("Ciconia is already running");
+		instance = new CiconiaApplication(source, configuration);
+		instance.run();
+	}
+
+	/**
+	 * Stops Ciconia
+	 * */
+	public static void stop(){
+		if(instance == null)
+			throw new CiconiaInitializationException("Ciconia is not running");
+		instance.stopApplication();
+		instance = null;
 	}
 
 }
