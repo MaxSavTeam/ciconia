@@ -29,7 +29,7 @@ dependencies {
     api 'com.sparkjava:spark-core:2.9.4'
 
     // https://mvnrepository.com/artifact/org.json/json
-    implementation 'org.json:json:20220320'
+    implementation 'org.json:json:20220924'
 }
 
 test {
