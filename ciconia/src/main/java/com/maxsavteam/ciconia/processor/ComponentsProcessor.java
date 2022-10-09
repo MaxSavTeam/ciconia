@@ -2,7 +2,7 @@ package com.maxsavteam.ciconia.processor;
 
 import com.maxsavteam.ciconia.annotation.Cron;
 import com.maxsavteam.ciconia.component.Component;
-import com.maxsavteam.ciconia.exception.IllegalMethodDeclaration;
+import com.maxsavteam.ciconia.exception.InvalidMethodDeclaration;
 import com.maxsavteam.ciconia.exception.InvalidComponentDeclarationException;
 import com.maxsavteam.ciconia.exception.InvalidCronExpressionException;
 import com.maxsavteam.ciconia.utils.CiconiaUtils;
@@ -43,7 +43,7 @@ public class ComponentsProcessor {
 			if(cron == null)
 				continue;
 
-			CiconiaUtils.checkMethodDeclaration(method, IllegalMethodDeclaration.class);
+			CiconiaUtils.checkMethodDeclaration(method, InvalidMethodDeclaration.class);
 
 			validateCronExpression(cron.value());
 

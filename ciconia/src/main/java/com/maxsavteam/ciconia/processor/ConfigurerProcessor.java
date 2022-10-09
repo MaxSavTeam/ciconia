@@ -5,9 +5,10 @@ import com.maxsavteam.ciconia.annotation.PostInitialization;
 import com.maxsavteam.ciconia.component.Configurer;
 import com.maxsavteam.ciconia.component.ObjectFactoryMethod;
 import com.maxsavteam.ciconia.component.PostInitializationMethod;
-import com.maxsavteam.ciconia.exception.IllegalObjectFactoryMethodDeclarationException;
-import com.maxsavteam.ciconia.exception.IllegalPostInitializationMethodDeclaration;
+import com.maxsavteam.ciconia.exception.InvalidObjectFactoryMethodDeclarationException;
+import com.maxsavteam.ciconia.exception.InvalidPostInitializationMethodDeclaration;
 import com.maxsavteam.ciconia.exception.InvalidConfigurationDeclarationException;
+import com.maxsavteam.ciconia.utils.CiconiaUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -48,25 +49,17 @@ public class ConfigurerProcessor {
 	}
 
 	private ObjectFactoryMethod processObjectFactoryMethod(Method method){
-		int modifiers = method.getModifiers();
-		if (Modifier.isStatic(modifiers))
-			throw new IllegalObjectFactoryMethodDeclarationException("Object factory method cannot be static");
-		if(!Modifier.isPublic(modifiers))
-			throw new IllegalObjectFactoryMethodDeclarationException("Object factory method must be public");
+		CiconiaUtils.checkMethodDeclaration(method, InvalidObjectFactoryMethodDeclarationException.class);
 
 		Class<?> returnType = method.getReturnType();
 		if (returnType == Void.TYPE || returnType.isPrimitive())
-			throw new IllegalObjectFactoryMethodDeclarationException("Method should not return void or primitive type");
+			throw new InvalidObjectFactoryMethodDeclarationException("Method should not return void or primitive type");
 
 		return new ObjectFactoryMethod(method);
 	}
 
 	private PostInitializationMethod processPostInitializationMethod(Method method){
-		int modifiers = method.getModifiers();
-		if (Modifier.isStatic(modifiers))
-			throw new IllegalPostInitializationMethodDeclaration("Post initialization method cannot be static");
-		if(!Modifier.isPublic(modifiers))
-			throw new IllegalPostInitializationMethodDeclaration("Post initialization method must be public");
+		CiconiaUtils.checkMethodDeclaration(method, InvalidPostInitializationMethodDeclaration.class);
 
 		PostInitialization annotation = method.getAnnotation(PostInitialization.class);
 
