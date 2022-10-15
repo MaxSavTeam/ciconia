@@ -11,4 +11,12 @@ public @interface Cron {
 
 	String value();
 
+	FailurePolicy failurePolicy() default FailurePolicy.IGNORE;
+
+	long retryTimeoutInSeconds() default 30;
+
+	enum FailurePolicy {
+		IGNORE, RETRY_AFTER_TIMEOUT, RETRY_IMMEDIATELY
+	}
+
 }
