@@ -42,16 +42,32 @@ public class CronScheduler {
 
 			@Override
 			public void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
-				if(jobException == null)
-					return;
+				Scheduler scheduler = context.getScheduler();
 
 				Component.CronMethod cronMethod = (Component.CronMethod) context.getJobDetail().getJobDataMap().get(CronJob.CRON_METHOD_KEY);
+
+				JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
+				if((Boolean) jobDataMap.getOrDefault(CronJob.JOB_RETRIED_FLAG, false) && jobException == null){
+					jobDataMap.remove(CronJob.JOB_RETRIED_FLAG);
+					Trigger newTrigger = getTriggerBuilder(cronMethod).build();
+					try {
+						scheduler.rescheduleJob(context.getTrigger().getKey(), newTrigger);
+					} catch (SchedulerException e) {
+						e.printStackTrace();
+					}
+					return;
+				}
+
+				if(jobException == null)
+					return;
 
 				if(cronMethod.getCron().failurePolicy() != Cron.FailurePolicy.RETRY_AFTER_TIMEOUT)
 					return;
 
-				Scheduler scheduler = context.getScheduler();
-				Trigger newTrigger = getTriggerBuilder(cronMethod)
+				context.getJobDetail().getJobDataMap().put(CronJob.JOB_RETRIED_FLAG, true);
+
+				Trigger newTrigger = TriggerBuilder.newTrigger()
+						.withIdentity(UUID.randomUUID().toString())
 						.startAt(new Date(System.currentTimeMillis() + cronMethod.getCron().retryTimeoutInSeconds() * 1000))
 						.build();
 				try {
@@ -86,11 +102,14 @@ public class CronScheduler {
 				.withSchedule(CronScheduleBuilder.cronSchedule(cronMethod.getCron().value()));
 	}
 
+	@PersistJobDataAfterExecution
 	public static class CronJob implements Job {
 
 		public static final String OBJECTS_DATABASE_KEY = "objectsDatabase";
 		public static final String COMPONENT_KEY = "component";
 		public static final String CRON_METHOD_KEY = "cronMethod";
+
+		public static final String JOB_RETRIED_FLAG = "jobRetried";
 
 		@Override
 		public void execute(JobExecutionContext context) throws JobExecutionException {
