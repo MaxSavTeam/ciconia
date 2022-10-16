@@ -5,6 +5,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Indicates, that method should be scheduled.
+ * @see <a href="https://ciconia.maxsavteam.com/docs/#/components/component?id=cron">Documentation</a>
+ * */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Cron {
