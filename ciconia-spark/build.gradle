@@ -41,4 +41,4 @@ java {
     targetCompatibility JavaVersion.VERSION_1_8
 }
 
-mstPublishing('ciconia-spark')
+ciconiaPublishing('ciconia-spark')
