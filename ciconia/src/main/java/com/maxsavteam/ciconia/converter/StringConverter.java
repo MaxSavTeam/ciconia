@@ -9,19 +9,19 @@ class StringConverter {
 		if(clazz.isAssignableFrom(String.class))
 			return param;
 
-		if(clazz.isAssignableFrom(Integer.class) && isInteger(param))
+		if((clazz.isAssignableFrom(int.class) || clazz.isAssignableFrom(Integer.class)) && isInteger(param))
 			return Integer.parseInt(param);
 
-		if(clazz.isAssignableFrom(Long.class) && isLong(param))
+		if((clazz.isAssignableFrom(long.class) || clazz.isAssignableFrom(Long.class)) && isLong(param))
 			return Long.parseLong(param);
 
-		if(clazz.isAssignableFrom(Double.class) && isDouble(param))
+		if((clazz.isAssignableFrom(double.class) || clazz.isAssignableFrom(Double.class)) && isDouble(param))
 			return Double.parseDouble(param);
 
-		if(clazz.isAssignableFrom(Float.class) && isFloat(param))
+		if((clazz.isAssignableFrom(float.class) || clazz.isAssignableFrom(Float.class)) && isFloat(param))
 			return Float.parseFloat(param);
 
-		if(clazz.isAssignableFrom(Boolean.class) && isBoolean(param))
+		if((clazz.isAssignableFrom(boolean.class) || clazz.isAssignableFrom(Boolean.class)) && isBoolean(param))
 			return Boolean.parseBoolean(param);
 
 		if(clazz.isAssignableFrom(JSONObject.class) && isJson(param))
