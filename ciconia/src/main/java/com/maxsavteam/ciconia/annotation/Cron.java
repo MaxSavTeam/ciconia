@@ -19,6 +19,8 @@ public @interface Cron {
 
 	long retryTimeoutInSeconds() default 30;
 
+	int maxCountOfRetries() default 5;
+
 	enum FailurePolicy {
 		IGNORE, RETRY_AFTER_TIMEOUT, RETRY_IMMEDIATELY
 	}

@@ -15,9 +15,8 @@ public class CronComponent {
 	public void cronTest(){
 		cronExecutionsCount++;
 		System.out.println("Cron test: " + new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(new Date()));
-		if(cronExecutionsCount % 3 == 1){
+		if(cronExecutionsCount % 3 == 1)
 			throw new RuntimeException("Test exception");
-		}
 	}
 
 }

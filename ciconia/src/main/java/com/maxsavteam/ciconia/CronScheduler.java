@@ -47,14 +47,9 @@ public class CronScheduler {
 				Component.CronMethod cronMethod = (Component.CronMethod) context.getJobDetail().getJobDataMap().get(CronJob.CRON_METHOD_KEY);
 
 				JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
-				if((Boolean) jobDataMap.getOrDefault(CronJob.JOB_RETRIED_FLAG, false) && jobException == null){
-					jobDataMap.remove(CronJob.JOB_RETRIED_FLAG);
-					Trigger newTrigger = getTriggerBuilder(cronMethod).build();
-					try {
-						scheduler.rescheduleJob(context.getTrigger().getKey(), newTrigger);
-					} catch (SchedulerException e) {
-						e.printStackTrace();
-					}
+				if((Integer) jobDataMap.getOrDefault(CronJob.JOB_RETRIED_COUNT_FLAG, 0) != 0 && jobException == null){
+					jobDataMap.remove(CronJob.JOB_RETRIED_COUNT_FLAG);
+					reschedule(context);
 					return;
 				}
 
@@ -64,7 +59,13 @@ public class CronScheduler {
 				if(cronMethod.getCron().failurePolicy() != Cron.FailurePolicy.RETRY_AFTER_TIMEOUT)
 					return;
 
-				context.getJobDetail().getJobDataMap().put(CronJob.JOB_RETRIED_FLAG, true);
+				int currentRetryCount = (int) jobDataMap.getOrDefault(CronJob.JOB_RETRIED_COUNT_FLAG, 0);
+				if(currentRetryCount >= cronMethod.getCron().maxCountOfRetries()){
+					jobDataMap.remove(CronJob.JOB_RETRIED_COUNT_FLAG);
+					reschedule(context);
+					return;
+				}
+				context.getJobDetail().getJobDataMap().put(CronJob.JOB_RETRIED_COUNT_FLAG, currentRetryCount + 1);
 
 				Trigger newTrigger = TriggerBuilder.newTrigger()
 						.withIdentity(UUID.randomUUID().toString())
@@ -77,6 +78,17 @@ public class CronScheduler {
 				}
 			}
 		};
+	}
+
+	private void reschedule(JobExecutionContext context){
+		Scheduler scheduler = context.getScheduler();
+		Component.CronMethod cronMethod = (Component.CronMethod) context.getJobDetail().getJobDataMap().get(CronJob.CRON_METHOD_KEY);
+		Trigger newTrigger = getTriggerBuilder(cronMethod).build();
+		try {
+			scheduler.rescheduleJob(context.getTrigger().getKey(), newTrigger);
+		} catch (SchedulerException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void shutdown() throws SchedulerException {
@@ -109,7 +121,7 @@ public class CronScheduler {
 		public static final String COMPONENT_KEY = "component";
 		public static final String CRON_METHOD_KEY = "cronMethod";
 
-		public static final String JOB_RETRIED_FLAG = "jobRetried";
+		public static final String JOB_RETRIED_COUNT_FLAG = "jobRetriedCount";
 
 		@Override
 		public void execute(JobExecutionContext context) throws JobExecutionException {
