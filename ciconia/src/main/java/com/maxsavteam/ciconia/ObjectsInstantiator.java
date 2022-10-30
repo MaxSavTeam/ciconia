@@ -6,6 +6,7 @@ import com.maxsavteam.ciconia.component.ObjectsDatabase;
 import com.maxsavteam.ciconia.exception.InstantiationException;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
 public class ObjectsInstantiator {
 
@@ -25,7 +26,20 @@ public class ObjectsInstantiator {
 		instantiatableObject.setClassInstance(instance);
 
 		if(instantiatableObject instanceof Component){
-			propertyFieldsInjector.performInjection((Component) instantiatableObject);
+			Component component = (Component)instantiatableObject;
+			propertyFieldsInjector.performInjection(component);
+			callPostConstructMethods(component);
+		}
+	}
+
+	private void callPostConstructMethods(Component component){
+		for(Method method : component.getPostConstructMethods()){
+			method.setAccessible(true);
+			try {
+				method.invoke(component.getClassInstance());
+			} catch (Exception e) {
+				throw new InstantiationException(e);
+			}
 		}
 	}
 

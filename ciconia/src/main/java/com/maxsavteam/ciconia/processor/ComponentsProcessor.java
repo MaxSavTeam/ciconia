@@ -37,7 +37,22 @@ public class ComponentsProcessor {
 		for(Component component : components){
 			processCronMethods(component);
 			processProperties(component);
+			processPostConstructMethods(component);
 		}
+	}
+
+	private void processPostConstructMethods(Component component){
+		List<Method> postConstructMethods = new ArrayList<>();
+		for(Method method : component.getaClass().getDeclaredMethods()){
+			if(method.isAnnotationPresent(javax.annotation.PostConstruct.class)){
+				if(method.getParameterCount() != 0)
+					throw new InvalidMethodDeclaration("PostConstruct method cannot have parameters");
+				if(!Modifier.isPublic(method.getModifiers()))
+					throw new InvalidMethodDeclaration("PostConstruct method should be public");
+				postConstructMethods.add(method);
+			}
+		}
+		component.setPostConstructMethods(postConstructMethods);
 	}
 
 	private void processProperties(Component component){

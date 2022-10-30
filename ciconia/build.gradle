@@ -42,6 +42,9 @@ dependencies {
     // https://mvnrepository.com/artifact/org.json/json
     api 'org.json:json:20220924'
 
+    // https://mvnrepository.com/artifact/javax.annotation/javax.annotation-api
+    api 'javax.annotation:javax.annotation-api:1.3.2'
+
 }
 
 test {
