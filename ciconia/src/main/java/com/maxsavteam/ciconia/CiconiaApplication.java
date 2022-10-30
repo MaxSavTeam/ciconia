@@ -82,7 +82,7 @@ public class CiconiaApplication {
 
 		ObjectsDatabase objectsDatabase = new ObjectsDatabase();
 
-		InstantiationUtils.instantiateComponents(topologicalOrder, objectsDatabase);
+		instantiateObjects(topologicalOrder, objectsDatabase);
 
 		if(configuration.isHandlerEnabled()) {
 			MappingsContainer container = new MappingsContainer(controllers, configuration);
@@ -99,6 +99,13 @@ public class CiconiaApplication {
 			processPostInitializationMethods(configurers, objectsDatabase);
 		} catch (InvocationTargetException | IllegalAccessException e) {
 			throw new ExecutionException(e);
+		}
+	}
+
+	private void instantiateObjects(List<InstantiatableObject> objects, ObjectsDatabase objectsDatabase){
+		ObjectsInstantiator instantiator = new ObjectsInstantiator(primarySource, objectsDatabase);
+		for(InstantiatableObject object : objects){
+			instantiator.instantiate(object);
 		}
 	}
 

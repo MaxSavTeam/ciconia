@@ -1,13 +1,16 @@
 package com.maxsavteam.ciconia.processor;
 
 import com.maxsavteam.ciconia.annotation.Cron;
+import com.maxsavteam.ciconia.annotation.Property;
 import com.maxsavteam.ciconia.component.Component;
+import com.maxsavteam.ciconia.exception.InvalidFieldDeclaration;
 import com.maxsavteam.ciconia.exception.InvalidMethodDeclaration;
 import com.maxsavteam.ciconia.exception.InvalidComponentDeclarationException;
 import com.maxsavteam.ciconia.exception.InvalidCronExpressionException;
 import com.maxsavteam.ciconia.utils.CiconiaUtils;
 import org.quartz.CronExpression;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.text.ParseException;
@@ -33,7 +36,24 @@ public class ComponentsProcessor {
 	public void setup(List<Component> components){
 		for(Component component : components){
 			processCronMethods(component);
+			processProperties(component);
 		}
+	}
+
+	private void processProperties(Component component){
+		List<Component.PropertyField> propertyFields = new ArrayList<>();
+		Field[] fields = component.getaClass().getDeclaredFields();
+		for(Field field : fields){
+			Property property = field.getAnnotation(Property.class);
+			if(property == null)
+				continue;
+			int modifiers = field.getModifiers();
+			if(Modifier.isStatic(modifiers)
+				|| Modifier.isFinal(modifiers))
+				throw new InvalidFieldDeclaration("Property field cannot be static or final");
+			propertyFields.add(new Component.PropertyField(property, field));
+		}
+		component.setPropertyFields(propertyFields);
 	}
 
 	private void processCronMethods(Component component){

@@ -1,21 +1,31 @@
 package com.maxsavteam.ciconia;
 
+import com.maxsavteam.ciconia.component.Component;
 import com.maxsavteam.ciconia.component.InstantiatableObject;
 import com.maxsavteam.ciconia.component.ObjectsDatabase;
 import com.maxsavteam.ciconia.exception.InstantiationException;
 
 import java.lang.reflect.Constructor;
-import java.util.List;
 
-public class InstantiationUtils {
+public class ObjectsInstantiator {
 
-	private InstantiationUtils(){}
+	private final Class<?> primarySource;
+	private final ObjectsDatabase objectsDatabase;
+	private final PropertyFieldsInjector propertyFieldsInjector;
 
-	public static void instantiateComponents(List<InstantiatableObject> objects, ObjectsDatabase objectsDatabase){
-		ObjectsDatabase immutableDatabase = objectsDatabase.immutable();
-		for(InstantiatableObject object : objects) {
-			Object instance = object.create(immutableDatabase);
-			objectsDatabase.addObject(instance, object.getaClass());
+	public ObjectsInstantiator(Class<?> primarySource, ObjectsDatabase objectsDatabase) {
+		this.primarySource = primarySource;
+		this.objectsDatabase = objectsDatabase;
+		this.propertyFieldsInjector = new PropertyFieldsInjector(primarySource);
+	}
+
+	public void instantiate(InstantiatableObject instantiatableObject) {
+		Object instance = instantiatableObject.create(objectsDatabase.immutable());
+		objectsDatabase.addObject(instance, instantiatableObject.getaClass());
+		instantiatableObject.setClassInstance(instance);
+
+		if(instantiatableObject instanceof Component){
+			propertyFieldsInjector.performInjection((Component) instantiatableObject);
 		}
 	}
 

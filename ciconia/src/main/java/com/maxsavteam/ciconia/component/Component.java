@@ -1,7 +1,9 @@
 package com.maxsavteam.ciconia.component;
 
 import com.maxsavteam.ciconia.annotation.Cron;
+import com.maxsavteam.ciconia.annotation.Property;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.List;
 public class Component extends InstantiatableComponent {
 
 	private List<CronMethod> cronMethods = new ArrayList<>();
+	private List<PropertyField> propertyFields = new ArrayList<>();
 
 	public Component(Class<?> aClass) {
 		super(aClass);
@@ -24,6 +27,14 @@ public class Component extends InstantiatableComponent {
 
 	public List<CronMethod> getCronMethods() {
 		return cronMethods;
+	}
+
+	public List<PropertyField> getPropertyFields() {
+		return propertyFields;
+	}
+
+	public void setPropertyFields(List<PropertyField> propertyFields) {
+		this.propertyFields = propertyFields;
 	}
 
 	public static class CronMethod {
@@ -42,6 +53,25 @@ public class Component extends InstantiatableComponent {
 
 		public Method getMethod() {
 			return method;
+		}
+	}
+
+	public static class PropertyField {
+
+		private final Property property;
+		private final Field field;
+
+		public PropertyField(Property property, Field field) {
+			this.property = property;
+			this.field = field;
+		}
+
+		public Property getProperty() {
+			return property;
+		}
+
+		public Field getField() {
+			return field;
 		}
 	}
 

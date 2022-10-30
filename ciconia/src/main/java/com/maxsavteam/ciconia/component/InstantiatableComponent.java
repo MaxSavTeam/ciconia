@@ -1,7 +1,7 @@
 package com.maxsavteam.ciconia.component;
 
-import com.maxsavteam.ciconia.InstantiationUtils;
 import com.maxsavteam.ciconia.InstantiatableObjectFactory;
+import com.maxsavteam.ciconia.ObjectsInstantiator;
 
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
@@ -21,7 +21,7 @@ public class InstantiatableComponent extends InstantiatableObject {
 
 	@Override
 	public InstantiatableObjectFactory getFactory() {
-		return database -> InstantiationUtils.instantiateAsComponent(this, database);
+		return database -> ObjectsInstantiator.instantiateAsComponent(this, database);
 	}
 
 }
