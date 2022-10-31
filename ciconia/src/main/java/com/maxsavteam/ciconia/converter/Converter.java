@@ -6,6 +6,7 @@ import com.maxsavteam.ciconia.exception.IncompatibleClassException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -39,15 +40,33 @@ public class Converter {
 	public Optional<Object> convertToParameterType(Object param){
 		if(param == null)
 			return Optional.of(NULL_VALUE);
+		if(clazz.isArray() && (param instanceof List || param instanceof JSONArray)){
+			Class<?> type = clazz.getComponentType();
+
+			Converter converter = new Converter(type, type);
+
+			List<?> list;
+			if(param instanceof JSONArray)
+				list = toList((JSONArray)param);
+			else
+				list = (List<?>) param;
+			Object array = Array.newInstance(type, list.size());
+			for(int i = 0; i < list.size(); i++){
+				Object o = list.get(i);
+				Optional<Object> converted = converter.convertToParameterType(o);
+				if(converted.isPresent()){
+					Array.set(array, i, converted.get());
+				}else{
+					return Optional.empty();
+				}
+			}
+
+			return Optional.of(array);
+		}
 		if(List.class.equals(clazz) && (param instanceof List || param instanceof JSONArray)){
 			Object paramList;
 			if(param instanceof JSONArray){
-				JSONArray array = (JSONArray) param;
-				List<Object> list = new ArrayList<>();
-				for(int i = 0; i < array.length(); i++){
-					list.add(array.get(i));
-				}
-				paramList = list;
+				paramList = toList((JSONArray) param);
 			}else{
 				paramList = param;
 			}
@@ -113,5 +132,13 @@ public class Converter {
 	 * */
 	public Class<?> getParameterClass() {
 		return clazz;
+	}
+
+	private static List<Object> toList(JSONArray jsonArray){
+		List<Object> list = new ArrayList<>(jsonArray.length());
+		for(int i = 0; i < jsonArray.length(); i++){
+			list.add(jsonArray.get(i));
+		}
+		return list;
 	}
 }
