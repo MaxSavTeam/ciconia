@@ -157,7 +157,7 @@ public class CiconiaApplication {
 				.collect(Collectors.toList());
 	}
 
-	public List<Configurer> getConfigurers(){
+	private List<Configurer> getConfigurers(){
 		List<Class<?>> list = ConfigurationsParser.parse(primarySource);
 		return new ConfigurerProcessor().process(list);
 	}
