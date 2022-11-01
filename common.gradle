@@ -7,7 +7,7 @@ repositories.ext.mstRepo = {
 apply from: "https://resources.maxsavteam.com/gradle/mst-publishing.gradle"
 
 ext {
-    libVersion = '0.17.1'
+    libVersion = '1.0.0-beta'
 }
 
 ext.ciconiaPublishing = { artId ->
