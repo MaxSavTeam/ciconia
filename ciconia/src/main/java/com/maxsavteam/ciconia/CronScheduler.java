@@ -13,14 +13,17 @@ import java.util.UUID;
 
 public class CronScheduler {
 
-	private final Scheduler quartzScheduler;
+	private Scheduler quartzScheduler;
 	private final ObjectsDatabase objectsDatabase;
 
-	public CronScheduler(ObjectsDatabase objectsDatabase) throws SchedulerException {
-		quartzScheduler = StdSchedulerFactory.getDefaultScheduler();
-		quartzScheduler.getListenerManager().addJobListener(getJobListener());
-		quartzScheduler.start();
+	public CronScheduler(ObjectsDatabase objectsDatabase) {
 		this.objectsDatabase = objectsDatabase;
+	}
+
+	private Scheduler createScheduler() throws SchedulerException {
+		Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+		scheduler.getListenerManager().addJobListener(getJobListener());
+		return scheduler;
 	}
 
 	private JobListener getJobListener(){
@@ -91,11 +94,20 @@ public class CronScheduler {
 		}
 	}
 
-	public void shutdown() throws SchedulerException {
-		quartzScheduler.shutdown();
+	public void shutdown() {
+		try {
+			if(quartzScheduler != null)
+				quartzScheduler.shutdown();
+		} catch (SchedulerException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void scheduleCronMethod(Component component, Component.CronMethod cronMethod) throws SchedulerException {
+		if(quartzScheduler == null)
+			quartzScheduler = createScheduler();
+		if(quartzScheduler.isInStandbyMode())
+			quartzScheduler.start();
 		JobDataMap jobDataMap = new JobDataMap();
 		jobDataMap.put(CronJob.OBJECTS_DATABASE_KEY, objectsDatabase);
 		jobDataMap.put(CronJob.COMPONENT_KEY, component);

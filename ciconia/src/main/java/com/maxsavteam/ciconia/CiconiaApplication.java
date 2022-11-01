@@ -219,11 +219,7 @@ public class CiconiaApplication {
 
 	private void stopApplication(){
 		callPreDestroyMethods();
-		try {
-			cronScheduler.shutdown();
-		} catch (SchedulerException e) {
-			e.printStackTrace();
-		}
+		cronScheduler.shutdown();
 	}
 
 	/**
