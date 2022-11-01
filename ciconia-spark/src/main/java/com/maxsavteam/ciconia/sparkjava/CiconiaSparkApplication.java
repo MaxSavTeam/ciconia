@@ -25,6 +25,10 @@ public class CiconiaSparkApplication {
 
 		Spark.get("*", (request, response) -> handleRequest(request, response, RequestMethod.GET));
 		Spark.post("*", (request, response) -> handleRequest(request, response, RequestMethod.POST));
+		Spark.put("*", (request, response) -> handleRequest(request, response, RequestMethod.PUT));
+		Spark.delete("*", (request, response) -> handleRequest(request, response, RequestMethod.DELETE));
+		Spark.patch("*", (request, response) -> handleRequest(request, response, RequestMethod.PATCH));
+		Spark.head("*", (request, response) -> handleRequest(request, response, RequestMethod.HEAD));
 
 		if (configuration.getExceptionHandler() != null)
 			Spark.exception(CiconiaRuntimeException.class, configuration.getExceptionHandler());

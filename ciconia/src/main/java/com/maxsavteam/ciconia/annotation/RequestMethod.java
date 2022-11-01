@@ -6,6 +6,6 @@ package com.maxsavteam.ciconia.annotation;
  * */
 public enum RequestMethod {
 
-	GET, POST
+	GET, POST, PUT, DELETE, PATCH, HEAD
 
 }
