@@ -17,6 +17,7 @@ public class Component extends InstantiatableComponent {
 	private List<CronMethod> cronMethods = new ArrayList<>();
 	private List<PropertyField> propertyFields = new ArrayList<>();
 	private List<Method> postConstructMethods = new ArrayList<>();
+	private List<Method> preDestroyMethods = new ArrayList<>();
 
 	public Component(Class<?> aClass) {
 		super(aClass);
@@ -44,6 +45,14 @@ public class Component extends InstantiatableComponent {
 
 	public void setPostConstructMethods(List<Method> postConstructMethods) {
 		this.postConstructMethods = postConstructMethods;
+	}
+
+	public List<Method> getPreDestroyMethods() {
+		return preDestroyMethods;
+	}
+
+	public void setPreDestroyMethods(List<Method> preDestroyMethods) {
+		this.preDestroyMethods = preDestroyMethods;
 	}
 
 	public static class CronMethod {

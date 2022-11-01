@@ -48,16 +48,16 @@ public class CiconiaUtils {
 		return sb.toString();
 	}
 
-	public static void checkMethodDeclaration(Method method, Class<? extends InvalidMethodDeclaration> exceptionClass){
+	public static void checkMethodDeclaration(Method method, Class<? extends InvalidMethodDeclaration> exceptionClass, String name){
 		int modifiers = method.getModifiers();
 		if(!Modifier.isPublic(modifiers))
-			throw getExceptionInstance(exceptionClass, "Method should be public");
+			throw getExceptionInstance(exceptionClass, name + " method should be public");
 		if(Modifier.isStatic(modifiers))
-			throw getExceptionInstance(exceptionClass, "Method should not be static");
+			throw getExceptionInstance(exceptionClass, name + " method should not be static");
 		if(Modifier.isAbstract(modifiers))
-			throw getExceptionInstance(exceptionClass, "Method should not be abstract");
+			throw getExceptionInstance(exceptionClass, name + " method should not be abstract");
 		if(Modifier.isNative(modifiers))
-			throw getExceptionInstance(exceptionClass, "Method should not be native");
+			throw getExceptionInstance(exceptionClass, name + " method should not be native");
 	}
 
 	private static <T extends InvalidMethodDeclaration> T getExceptionInstance(Class<T> exceptionClass, String message){

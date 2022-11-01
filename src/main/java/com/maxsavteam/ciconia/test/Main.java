@@ -10,6 +10,7 @@ import com.maxsavteam.ciconia.annotation.RequestMethod;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.annotation.PreDestroy;
 import java.util.List;
 
 @Component
@@ -33,6 +34,11 @@ public class Main {
 		);
 		System.out.println();
 		System.out.println(result);
+	}
+
+	@PreDestroy
+	public void preDestroy(){
+		System.out.println("preDestroy");
 	}
 
 	public static class Test {

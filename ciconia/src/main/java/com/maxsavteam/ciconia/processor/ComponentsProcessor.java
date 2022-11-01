@@ -10,6 +10,7 @@ import com.maxsavteam.ciconia.exception.InvalidCronExpressionException;
 import com.maxsavteam.ciconia.utils.CiconiaUtils;
 import org.quartz.CronExpression;
 
+import javax.annotation.PreDestroy;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -38,7 +39,21 @@ public class ComponentsProcessor {
 			processCronMethods(component);
 			processProperties(component);
 			processPostConstructMethods(component);
+			processPreDestroyMethods(component);
 		}
+	}
+
+	private void processPreDestroyMethods(Component component){
+		List<Method> preDestroyMethods = new ArrayList<>();
+		for(Method method : component.getaClass().getDeclaredMethods()){
+			if(method.isAnnotationPresent(PreDestroy.class)){
+				if(method.getParameterCount() != 0)
+					throw new InvalidMethodDeclaration("PreDestroy method cannot have parameters");
+				CiconiaUtils.checkMethodDeclaration(method, InvalidMethodDeclaration.class, "PreDestroy");
+				preDestroyMethods.add(method);
+			}
+		}
+		component.setPreDestroyMethods(preDestroyMethods);
 	}
 
 	private void processPostConstructMethods(Component component){
@@ -47,8 +62,7 @@ public class ComponentsProcessor {
 			if(method.isAnnotationPresent(javax.annotation.PostConstruct.class)){
 				if(method.getParameterCount() != 0)
 					throw new InvalidMethodDeclaration("PostConstruct method cannot have parameters");
-				if(!Modifier.isPublic(method.getModifiers()))
-					throw new InvalidMethodDeclaration("PostConstruct method should be public");
+				CiconiaUtils.checkMethodDeclaration(method, InvalidMethodDeclaration.class, "PostConstruct");
 				postConstructMethods.add(method);
 			}
 		}
@@ -78,7 +92,7 @@ public class ComponentsProcessor {
 			if(cron == null)
 				continue;
 
-			CiconiaUtils.checkMethodDeclaration(method, InvalidMethodDeclaration.class);
+			CiconiaUtils.checkMethodDeclaration(method, InvalidMethodDeclaration.class, "Cron");
 
 			validateCronExpression(cron.value());
 

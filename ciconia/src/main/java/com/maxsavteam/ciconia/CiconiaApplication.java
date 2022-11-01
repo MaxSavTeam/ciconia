@@ -24,6 +24,7 @@ import com.maxsavteam.ciconia.utils.Pair;
 import org.quartz.SchedulerException;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -40,6 +41,7 @@ public class CiconiaApplication {
 	private final CiconiaConfiguration configuration;
 
 	private CronScheduler cronScheduler;
+	private List<Component> allComponentsList;
 
 	private CiconiaApplication(Class<?> primarySource, CiconiaConfiguration configuration) {
 		this.primarySource = primarySource;
@@ -59,6 +61,8 @@ public class CiconiaApplication {
 			if(allComponents.stream().noneMatch(c -> c.getaClass().equals(configurer.getaClass())))
 				allComponents.add(configurer);
 		}
+
+		allComponentsList = allComponents;
 
 		new ComponentsProcessor().setup(allComponents);
 
@@ -95,10 +99,20 @@ public class CiconiaApplication {
 			throw new CiconiaInitializationException(e);
 		}
 
-		try {
-			processPostInitializationMethods(configurers, objectsDatabase);
-		} catch (InvocationTargetException | IllegalAccessException e) {
-			throw new ExecutionException(e);
+		Runtime.getRuntime().addShutdownHook(new Thread(this::callPreDestroyMethods));
+
+		callPostInitializationMethods(configurers, objectsDatabase);
+	}
+
+	private void callPreDestroyMethods(){
+		for(Component component : allComponentsList){
+			for(Method method : component.getPreDestroyMethods()){
+				try {
+					method.invoke(component.getClassInstance());
+				} catch (IllegalAccessException | InvocationTargetException e) {
+					throw new ExecutionException(e);
+				}
+			}
 		}
 	}
 
@@ -118,7 +132,7 @@ public class CiconiaApplication {
 		}
 	}
 
-	private void processPostInitializationMethods(List<Configurer> configurers, ObjectsDatabase objectsDatabase) throws InvocationTargetException, IllegalAccessException {
+	private void callPostInitializationMethods(List<Configurer> configurers, ObjectsDatabase objectsDatabase) {
 		List<PostInitializationMethod> methods = new ArrayList<>();
 		for(Configurer configurer : configurers){
 			methods.addAll(configurer.getPostInitializationMethods());
@@ -127,7 +141,11 @@ public class CiconiaApplication {
 		methods.sort(Comparator.comparingInt(PostInitializationMethod::getOrder));
 
 		for(PostInitializationMethod method : methods){
-			method.invoke(objectsDatabase);
+			try {
+				method.invoke(objectsDatabase);
+			} catch (InvocationTargetException | IllegalAccessException e) {
+				throw new ExecutionException(e);
+			}
 		}
 	}
 
@@ -200,6 +218,7 @@ public class CiconiaApplication {
 	}
 
 	private void stopApplication(){
+		callPreDestroyMethods();
 		try {
 			cronScheduler.shutdown();
 		} catch (SchedulerException e) {

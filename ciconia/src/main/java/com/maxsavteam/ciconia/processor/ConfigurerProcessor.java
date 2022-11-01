@@ -49,7 +49,7 @@ public class ConfigurerProcessor {
 	}
 
 	private ObjectFactoryMethod processObjectFactoryMethod(Method method){
-		CiconiaUtils.checkMethodDeclaration(method, InvalidObjectFactoryMethodDeclarationException.class);
+		CiconiaUtils.checkMethodDeclaration(method, InvalidObjectFactoryMethodDeclarationException.class, "ObjectFactory");
 
 		Class<?> returnType = method.getReturnType();
 		if (returnType == Void.TYPE || returnType.isPrimitive())
@@ -59,7 +59,7 @@ public class ConfigurerProcessor {
 	}
 
 	private PostInitializationMethod processPostInitializationMethod(Method method){
-		CiconiaUtils.checkMethodDeclaration(method, InvalidPostInitializationMethodDeclaration.class);
+		CiconiaUtils.checkMethodDeclaration(method, InvalidPostInitializationMethodDeclaration.class, "PostInitialization");
 
 		PostInitialization annotation = method.getAnnotation(PostInitialization.class);
 
