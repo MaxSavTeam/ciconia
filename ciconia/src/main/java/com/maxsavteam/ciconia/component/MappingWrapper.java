@@ -71,7 +71,7 @@ public class MappingWrapper {
 	}
 
 	private Pattern createRegexPattern() {
-		final String variablePattern = "(?<%s>[\\w]*)";
+		final String variablePattern = "(?<%s>[\\w-]*)";
 		StringBuilder sb = new StringBuilder();
 		boolean escapeIntervalStarted = false;
 		for (int i = 0; i < mappingName.length(); i++) {
